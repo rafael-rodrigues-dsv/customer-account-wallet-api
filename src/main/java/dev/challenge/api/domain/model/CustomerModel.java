@@ -1,5 +1,6 @@
 package dev.challenge.api.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dev.challenge.api.domain.enumeration.CustomerTypeEnum;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -31,7 +32,7 @@ public class CustomerModel {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long customerId;
+  private Long id;
 
   @Enumerated(EnumType.ORDINAL)
   @Column(nullable = false, length = 15)
@@ -40,7 +41,7 @@ public class CustomerModel {
   @Column(nullable = false, length = 20, unique = true)
   private String documentNumber;
 
-  @Column(nullable = false, length = 50)
+  @Column(nullable = false, length = 150)
   private String name;
 
   @Column(nullable = true, length = 35)
@@ -55,5 +56,6 @@ public class CustomerModel {
 
   @Column(nullable = true)
   @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<CustomerAddressModel> customerBankAccount;
+  @JsonManagedReference
+  private Set<CustomerBankAccountModel> customerBankAccount;
 }

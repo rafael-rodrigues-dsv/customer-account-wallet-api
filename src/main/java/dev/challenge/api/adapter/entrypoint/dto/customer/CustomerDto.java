@@ -17,7 +17,7 @@ import java.util.Set;
 @Getter
 @Setter
 public class CustomerDto {
-  private Long customerId;
+  private Long id;
   private CustomerTypeEnum customerType;
   private String documentNumber;
   private String name;

@@ -1,5 +1,6 @@
 package dev.challenge.api.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -28,10 +29,11 @@ public class CustomerBankAccountModel {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long customerBankAccountId;
+  private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "customerId", referencedColumnName = "customerId")
+  @JsonBackReference
+  @JoinColumn(name = "customerId", referencedColumnName = "id")
   private CustomerModel customer;
 
   @Column(nullable = false, length = 10)

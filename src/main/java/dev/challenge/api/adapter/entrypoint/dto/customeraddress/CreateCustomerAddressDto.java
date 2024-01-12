@@ -1,7 +1,7 @@
 package dev.challenge.api.adapter.entrypoint.dto.customeraddress;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.challenge.api.domain.enumeration.CustomerAddressTypeEnum;
-import dev.challenge.api.domain.model.CustomerModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +14,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateCustomerAddressDto {
+
+  @Getter(onMethod = @__(@JsonIgnore))
+  @Setter(onMethod = @__(@JsonIgnore))
   private Long customerId;
   private String street;
   private String city;

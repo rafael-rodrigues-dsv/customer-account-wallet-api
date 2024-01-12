@@ -16,7 +16,12 @@ import lombok.Setter;
 public class UpdateCustomerAddressDto {
   @Getter(onMethod = @__(@JsonIgnore))
   @Setter(onMethod = @__(@JsonIgnore))
-  private Long customerAddressId;
+  private Long id;
+
+  @Getter(onMethod = @__(@JsonIgnore))
+  @Setter(onMethod = @__(@JsonIgnore))
+  private Long customerId;
+
   private String street;
   private String city;
   private String state;

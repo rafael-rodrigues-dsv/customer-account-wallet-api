@@ -1,5 +1,6 @@
 package dev.challenge.api.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import dev.challenge.api.domain.enumeration.CustomerAddressTypeEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,10 +30,11 @@ public class CustomerAddressModel {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long customerAddressId;
+  private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "customerId", referencedColumnName = "customerId")
+  @JsonBackReference
+  @JoinColumn(name = "customerId", referencedColumnName = "id")
   private CustomerModel customer;
 
   @Column(nullable = false, length = 100)
