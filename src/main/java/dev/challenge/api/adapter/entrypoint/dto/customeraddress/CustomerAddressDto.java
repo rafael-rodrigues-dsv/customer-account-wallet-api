@@ -15,7 +15,6 @@ import lombok.Setter;
 @Setter
 public class CustomerAddressDto {
   private Long id;
-  private CustomerModel customer;
   private String street;
   private String city;
   private String state;

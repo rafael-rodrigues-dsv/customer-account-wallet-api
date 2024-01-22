@@ -51,10 +51,8 @@ public class CustomerModel {
   private String phoneNumber;
 
   @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  @JsonManagedReference
   private Set<CustomerAddressModel> customerAddresses;
 
   @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  @JsonManagedReference
   private Set<CustomerAccountModel> customerBankAccount;
 }

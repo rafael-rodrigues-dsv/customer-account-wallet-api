@@ -3,6 +3,7 @@ package dev.challenge.api.domain.impl;
 import dev.challenge.api.adapter.database.repository.CustomerAccountRepository;
 import dev.challenge.api.domain.CustomerAccountService;
 import dev.challenge.api.domain.model.CustomerAccountModel;
+import dev.challenge.api.domain.model.CustomerAddressModel;
 import dev.challenge.api.domain.model.CustomerModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,10 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
   @Override
   public CustomerAccountModel add(Long customerId, CustomerAccountModel customerAddress) {
     customerAddress.setCustomer(customerService.findById(customerId));
+
+    if (hasDefaultByCustomerId(customerId))
+      customerAddress.setIsDefault(Boolean.FALSE);
+
     return customerAccountRepository.save(customerAddress);
   }
 
@@ -54,5 +59,17 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
     return customerAccountRepository.findAll(filter)
         .stream()
         .toList();
+  }
+
+  private boolean hasDefaultByCustomerId(Long customerId) {
+    Example<CustomerAccountModel> filter = Example.of(CustomerAccountModel.builder()
+        .customer(CustomerModel.builder().id(customerId).build())
+        .isDefault(Boolean.TRUE)
+        .build());
+
+    return customerAccountRepository
+        .findAll(filter)
+        .stream()
+        .count() > 0;
   }
 }

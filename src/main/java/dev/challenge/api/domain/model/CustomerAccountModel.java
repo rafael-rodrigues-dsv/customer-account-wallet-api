@@ -32,7 +32,6 @@ public class CustomerAccountModel {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JsonBackReference
   @JoinColumn(name = "customerId", referencedColumnName = "id")
   private CustomerModel customer;
 
@@ -47,7 +46,4 @@ public class CustomerAccountModel {
 
   @Column(nullable = false)
   private Boolean isDefault = true;
-
-  @Column(nullable = false)
-  private Boolean isActive = true;
 }

@@ -22,6 +22,10 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
   @Override
   public CustomerAddressModel add(Long customerId, CustomerAddressModel customerAddress) {
     customerAddress.setCustomer(customerService.findById(customerId));
+
+    if (hasDefaultByCustomerId(customerId))
+      customerAddress.setIsDefault(Boolean.FALSE);
+
     return customerAddressRepository.save(customerAddress);
   }
 
@@ -59,5 +63,17 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
     return customerAddressRepository.findAll(filter)
         .stream()
         .toList();
+  }
+
+  private Boolean hasDefaultByCustomerId(Long customerId) {
+    Example<CustomerAddressModel> filter = Example.of(CustomerAddressModel.builder()
+        .customer(CustomerModel.builder().id(customerId).build())
+        .isDefault(Boolean.TRUE)
+        .build());
+
+    return customerAddressRepository
+        .findAll(filter)
+        .stream()
+        .count() > 0;
   }
 }

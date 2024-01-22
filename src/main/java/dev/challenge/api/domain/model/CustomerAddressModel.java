@@ -33,7 +33,6 @@ public class CustomerAddressModel {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JsonBackReference
   @JoinColumn(name = "customerId", referencedColumnName = "id")
   private CustomerModel customer;
 

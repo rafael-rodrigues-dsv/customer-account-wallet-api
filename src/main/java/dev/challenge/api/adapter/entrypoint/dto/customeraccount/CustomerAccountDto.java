@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 @Setter
 public class CustomerAccountDto {
   private Long id;
-  private CustomerModel customer;
   private String agency;
   private String accountNumber;
   private BigDecimal balance;
