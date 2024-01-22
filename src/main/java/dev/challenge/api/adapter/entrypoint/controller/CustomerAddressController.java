@@ -92,7 +92,7 @@ public class CustomerAddressController {
         : ResponseEntity.notFound().build();
   }
 
-  @Operation(summary = "Get All Customer Address")
+  @Operation(summary = "Get All Customer Addresses")
   @GetMapping
   public ResponseEntity<List<CustomerAddressDto>> findAllByCustomerId(
       @PathVariable @Parameter(description = "ID of the customer") Long customerId) {

@@ -22,6 +22,5 @@ public class CreateCustomerAddressDto {
   private String city;
   private String state;
   private String zipCode;
-  private Boolean isMainAddress;
   private CustomerAddressTypeEnum addressType;
 }

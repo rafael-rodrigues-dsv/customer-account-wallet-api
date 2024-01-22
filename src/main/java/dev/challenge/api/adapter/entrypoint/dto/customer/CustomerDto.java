@@ -1,7 +1,7 @@
 package dev.challenge.api.adapter.entrypoint.dto.customer;
 
 import dev.challenge.api.adapter.entrypoint.dto.customeraddress.CustomerAddressDto;
-import dev.challenge.api.adapter.entrypoint.dto.customerbankaccount.CustomerBankAccountDto;
+import dev.challenge.api.adapter.entrypoint.dto.customeraccount.CustomerAccountDto;
 import dev.challenge.api.domain.enumeration.CustomerTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,5 +24,5 @@ public class CustomerDto {
   private String email;
   private String phoneNumber;
   private Set<CustomerAddressDto> customerAddresses;
-  private Set<CustomerBankAccountDto> customerBankAccounts;
+  private Set<CustomerAccountDto> customerBankAccounts;
 }

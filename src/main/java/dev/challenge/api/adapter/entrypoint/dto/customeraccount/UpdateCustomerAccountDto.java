@@ -1,4 +1,4 @@
-package dev.challenge.api.adapter.entrypoint.dto.customerbankaccount;
+package dev.challenge.api.adapter.entrypoint.dto.customeraccount;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -14,12 +14,13 @@ import java.math.BigDecimal;
 @Builder
 @Getter
 @Setter
-public class CreateCustomerBankAccountDto {
-
+public class UpdateCustomerAccountDto {
+  @Getter(onMethod = @__(@JsonIgnore))
+  @Setter(onMethod = @__(@JsonIgnore))
+  private Long id;
   @Getter(onMethod = @__(@JsonIgnore))
   @Setter(onMethod = @__(@JsonIgnore))
   private Long customerId;
-
   private String agency;
   private String accountNumber;
   private BigDecimal balance;

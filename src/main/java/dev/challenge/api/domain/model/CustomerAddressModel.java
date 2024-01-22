@@ -50,7 +50,7 @@ public class CustomerAddressModel {
   private String zipCode;
 
   @Column(nullable = false)
-  private Boolean isMainAddress;
+  private Boolean isDefault = true;
 
   @Enumerated(EnumType.ORDINAL)
   @Column(nullable = false, length = 15)

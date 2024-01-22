@@ -24,8 +24,8 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "CustomerBankAccount")
-public class CustomerBankAccountModel {
+@Table(name = "CustomerAccount")
+public class CustomerAccountModel {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,11 +39,14 @@ public class CustomerBankAccountModel {
   @Column(nullable = false, length = 10)
   private String agency;
 
-  @Column(nullable = false, length = 15, unique = true)
+  @Column(nullable = false, length = 15)
   private String accountNumber;
 
   @Column(nullable = false)
   private BigDecimal balance;
+
+  @Column(nullable = false)
+  private Boolean isDefault = true;
 
   @Column(nullable = false)
   private Boolean isActive = true;

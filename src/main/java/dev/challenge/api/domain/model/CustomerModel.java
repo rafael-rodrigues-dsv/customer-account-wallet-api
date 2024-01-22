@@ -38,24 +38,23 @@ public class CustomerModel {
   @Column(nullable = false, length = 15)
   private CustomerTypeEnum customerType;
 
-  @Column(nullable = false, length = 20, unique = true)
+  @Column(nullable = false, length = 20)
   private String documentNumber;
 
   @Column(nullable = false, length = 150)
   private String name;
 
-  @Column(nullable = true, length = 35)
+  @Column(length = 35)
   private String email;
 
-  @Column(nullable = true, length = 15)
+  @Column(length = 15)
   private String phoneNumber;
 
-  @Column(nullable = true)
-  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<CustomerAddressModel> customerAddresses;
-
-  @Column(nullable = true)
   @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @JsonManagedReference
-  private Set<CustomerBankAccountModel> customerBankAccount;
+  private Set<CustomerAddressModel> customerAddresses;
+
+  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JsonManagedReference
+  private Set<CustomerAccountModel> customerBankAccount;
 }
