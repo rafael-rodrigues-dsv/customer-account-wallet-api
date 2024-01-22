@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -21,19 +22,23 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
 
   @Override
   public CustomerAccountModel add(Long customerId, CustomerAccountModel customerAddress) {
-    customerAddress.setCustomer(customerService.findById(customerId));
 
-    if (hasDefaultByCustomerId(customerId))
-      customerAddress.setIsDefault(Boolean.FALSE);
+    CustomerAccountModel newAccount = CustomerAccountModel.builder()
+        .customer(customerService.findById(customerId))
+        .agency(customerAddress.getAgency())
+        .accountNumber(customerAddress.getAccountNumber())
+        .balance(customerAddress.getBalance())
+        .isDefault(hasDefaultByCustomerId(customerId) ? Boolean.FALSE : Boolean.TRUE)
+        .build();
 
-    return customerAccountRepository.save(customerAddress);
+    return customerAccountRepository.save(newAccount);
   }
 
   @Override
   public CustomerAccountModel update(Long id, Long customerId, CustomerAccountModel customerBankAccount) {
-    CustomerAccountModel existingCustomerBankAccount = findByIdAndCustomerId(id, customerId);
-    existingCustomerBankAccount.setBalance(customerBankAccount.getBalance());
-    return customerAccountRepository.save(existingCustomerBankAccount);
+    CustomerAccountModel existingAccount = findByIdAndCustomerId(id, customerId);
+    existingAccount.setBalance(customerBankAccount.getBalance());
+    return customerAccountRepository.save(existingAccount);
   }
 
   @Override

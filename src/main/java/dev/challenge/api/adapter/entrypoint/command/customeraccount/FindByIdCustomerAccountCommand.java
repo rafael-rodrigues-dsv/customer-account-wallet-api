@@ -17,9 +17,9 @@ public class FindByIdCustomerAccountCommand implements ServiceCommand<FindByIdAn
   private final CustomMapper customMapper;
 
   @Override
-  public CustomerAccountDto execute(FindByIdAndCustomerIdFilterDto filterCustomerBankAccountDto) {
+  public CustomerAccountDto execute(FindByIdAndCustomerIdFilterDto filterAccountDto) {
     return customMapper.map(service.findByIdAndCustomerId(
-        filterCustomerBankAccountDto.getId(),
-        filterCustomerBankAccountDto.getCustomerId()), CustomerAccountDto.class);
+        filterAccountDto.getId(),
+        filterAccountDto.getCustomerId()), CustomerAccountDto.class);
   }
 }

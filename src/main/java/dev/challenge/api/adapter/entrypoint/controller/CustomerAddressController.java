@@ -48,15 +48,15 @@ public class CustomerAddressController {
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<CustomerAddressDto> create(
       @PathVariable @Parameter(description = "ID of the customer") Long customerId,
-      @RequestBody CreateCustomerAddressDto createCustomerAddressDto) {
+      @RequestBody CreateCustomerAddressDto createAddressDto) {
 
-    createCustomerAddressDto.setCustomerId(customerId);
-    CustomerAddressDto createdCustomerAddress = createCustomerAddressCommand.execute(createCustomerAddressDto);
+    createAddressDto.setCustomerId(customerId);
+    CustomerAddressDto createdAddress = createCustomerAddressCommand.execute(createAddressDto);
 
     URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-        .buildAndExpand(createdCustomerAddress.getId()).toUri();
+        .buildAndExpand(createdAddress.getId()).toUri();
 
-    return ResponseEntity.created(location).body(createdCustomerAddress);
+    return ResponseEntity.created(location).body(createdAddress);
   }
 
   @Operation(summary = "Update a Customer Address by ID")
@@ -64,14 +64,14 @@ public class CustomerAddressController {
   public ResponseEntity<CustomerAddressDto> update(
       @PathVariable @Parameter(description = "ID of the customer address") Long id,
       @PathVariable @Parameter(description = "ID of the customer") Long customerId,
-      @RequestBody UpdateCustomerAddressDto updateCustomerAddressDto) {
+      @RequestBody UpdateCustomerAddressDto updateAddressDto) {
 
-    updateCustomerAddressDto.setId(id);
-    updateCustomerAddressDto.setCustomerId(customerId);
+    updateAddressDto.setId(id);
+    updateAddressDto.setCustomerId(customerId);
 
-    CustomerAddressDto updatedCustomerAddress = updateCustomerAddressCommand.execute(updateCustomerAddressDto);
+    CustomerAddressDto updatedAddressDto = updateCustomerAddressCommand.execute(updateAddressDto);
 
-    return updatedCustomerAddress != null ? ResponseEntity.ok(updatedCustomerAddress)
+    return updatedAddressDto != null ? ResponseEntity.ok(updatedAddressDto)
         : ResponseEntity.notFound().build();
   }
 
@@ -86,9 +86,9 @@ public class CustomerAddressController {
         .customerId(customerId)
         .build();
 
-    CustomerAddressDto customerAddress = findByIdCustomerAddressCommand.execute(filter);
+    CustomerAddressDto addressDto = findByIdCustomerAddressCommand.execute(filter);
 
-    return customerAddress != null ? ResponseEntity.ok(customerAddress)
+    return addressDto != null ? ResponseEntity.ok(addressDto)
         : ResponseEntity.notFound().build();
   }
 

@@ -50,9 +50,11 @@ public class CustomerModel {
   @Column(length = 15)
   private String phoneNumber;
 
+  @JsonManagedReference
   @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<CustomerAddressModel> customerAddresses;
 
+  @JsonManagedReference
   @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<CustomerAccountModel> customerBankAccount;
 }

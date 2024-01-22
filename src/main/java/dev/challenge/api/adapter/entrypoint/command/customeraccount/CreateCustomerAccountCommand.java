@@ -18,8 +18,8 @@ public class CreateCustomerAccountCommand implements ServiceCommand<CreateCustom
   private final CustomMapper customMapper;
 
   @Override
-  public CustomerAccountDto execute(CreateCustomerAccountDto customerAccountDto) {
-    return customMapper.map(service.add(customerAccountDto.getCustomerId(),
-        customMapper.map(customerAccountDto, CustomerAccountModel.class)), CustomerAccountDto.class);
+  public CustomerAccountDto execute(CreateCustomerAccountDto accountDto) {
+    return customMapper.map(service.add(accountDto.getCustomerId(),
+        customMapper.map(accountDto, CustomerAccountModel.class)), CustomerAccountDto.class);
   }
 }

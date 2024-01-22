@@ -48,15 +48,15 @@ public class CustomerAccountController {
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<CustomerAccountDto> create(
       @PathVariable @Parameter(description = "ID of the customer") Long customerId,
-      @RequestBody CreateCustomerAccountDto createCustomerAccountDto) {
+      @RequestBody CreateCustomerAccountDto createAccountDto) {
 
-    createCustomerAccountDto.setCustomerId(customerId);
-    CustomerAccountDto createdCustomerAccount = createCustomerAccountCommand.execute(createCustomerAccountDto);
+    createAccountDto.setCustomerId(customerId);
+    CustomerAccountDto createdAccount = createCustomerAccountCommand.execute(createAccountDto);
 
     URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-        .buildAndExpand(createdCustomerAccount.getId()).toUri();
+        .buildAndExpand(createdAccount.getId()).toUri();
 
-    return ResponseEntity.created(location).body(createdCustomerAccount);
+    return ResponseEntity.created(location).body(createdAccount);
   }
 
   @Operation(summary = "Update a Customer Account by ID")
@@ -69,9 +69,9 @@ public class CustomerAccountController {
     updateCustomerAccountDto.setId(id);
     updateCustomerAccountDto.setCustomerId(customerId);
 
-    CustomerAccountDto updatedCustomerAccount = updateCustomerAccountCommand.execute(updateCustomerAccountDto);
+    CustomerAccountDto updatedAccount = updateCustomerAccountCommand.execute(updateCustomerAccountDto);
 
-    return updatedCustomerAccount != null ? ResponseEntity.ok(updatedCustomerAccount)
+    return updatedAccount != null ? ResponseEntity.ok(updatedAccount)
         : ResponseEntity.notFound().build();
   }
 
@@ -86,9 +86,9 @@ public class CustomerAccountController {
         .customerId(customerId)
         .build();
 
-    CustomerAccountDto customerAccount = findByIdCustomerAccountCommand.execute(filter);
+    CustomerAccountDto accountDto = findByIdCustomerAccountCommand.execute(filter);
 
-    return customerAccount != null ? ResponseEntity.ok(customerAccount)
+    return accountDto != null ? ResponseEntity.ok(accountDto)
         : ResponseEntity.notFound().build();
   }
 
@@ -97,10 +97,9 @@ public class CustomerAccountController {
   public ResponseEntity<List<CustomerAccountDto>> findAllByCustomerId(
       @PathVariable @Parameter(description = "ID of the customer") Long customerId) {
 
-    List<CustomerAccountDto> customerAccount = findAllCustomerAccountCommand.execute(customerId);
+    List<CustomerAccountDto> accountDto = findAllCustomerAccountCommand.execute(customerId);
 
-    return customerAccount != null && !customerAccount.isEmpty()
-        ? ResponseEntity.ok(customerAccount)
+    return accountDto != null && !accountDto.isEmpty() ? ResponseEntity.ok(accountDto)
         : ResponseEntity.noContent().build();
   }
 }

@@ -21,23 +21,29 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
 
   @Override
   public CustomerAddressModel add(Long customerId, CustomerAddressModel customerAddress) {
-    customerAddress.setCustomer(customerService.findById(customerId));
 
-    if (hasDefaultByCustomerId(customerId))
-      customerAddress.setIsDefault(Boolean.FALSE);
+    CustomerAddressModel newAddress = CustomerAddressModel.builder()
+        .customer(customerService.findById(customerId))
+        .street(customerAddress.getStreet())
+        .city(customerAddress.getCity())
+        .state(customerAddress.getState())
+        .zipCode(customerAddress.getZipCode())
+        .addressType(customerAddress.getAddressType())
+        .isDefault(hasDefaultByCustomerId(customerId) ? Boolean.FALSE : Boolean.TRUE)
+        .build();
 
-    return customerAddressRepository.save(customerAddress);
+    return customerAddressRepository.save(newAddress);
   }
 
   @Override
   public CustomerAddressModel update(Long id, Long customerId, CustomerAddressModel customerAddress) {
-    CustomerAddressModel existingCustomerAddress = findByIdAndCustomerId(id, customerId);
-    existingCustomerAddress.setAddressType(customerAddress.getAddressType());
-    existingCustomerAddress.setStreet(customerAddress.getStreet());
-    existingCustomerAddress.setCity(customerAddress.getCity());
-    existingCustomerAddress.setState(customerAddress.getState());
-    existingCustomerAddress.setZipCode(customerAddress.getZipCode());
-    return customerAddressRepository.save(existingCustomerAddress);
+    CustomerAddressModel existingAddress = findByIdAndCustomerId(id, customerId);
+    existingAddress.setAddressType(customerAddress.getAddressType());
+    existingAddress.setStreet(customerAddress.getStreet());
+    existingAddress.setCity(customerAddress.getCity());
+    existingAddress.setState(customerAddress.getState());
+    existingAddress.setZipCode(customerAddress.getZipCode());
+    return customerAddressRepository.save(existingAddress);
   }
 
   @Override

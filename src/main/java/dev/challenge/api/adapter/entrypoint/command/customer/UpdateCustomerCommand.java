@@ -18,8 +18,8 @@ public class UpdateCustomerCommand implements ServiceCommand<UpdateCustomerDto, 
   private final CustomMapper customMapper;
 
   @Override
-  public CustomerDto execute(UpdateCustomerDto updateCustomerAddress) {
-    return customMapper.map(service.update(updateCustomerAddress.getId(),
-        customMapper.map(updateCustomerAddress, CustomerModel.class)), CustomerDto.class);
+  public CustomerDto execute(UpdateCustomerDto updateCustomerDto) {
+    return customMapper.map(service.update(updateCustomerDto.getId(),
+        customMapper.map(updateCustomerDto, CustomerModel.class)), CustomerDto.class);
   }
 }
