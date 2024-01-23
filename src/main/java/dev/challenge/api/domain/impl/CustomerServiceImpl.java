@@ -26,11 +26,11 @@ public class CustomerServiceImpl implements CustomerService {
       existingCustomer.setEmail(customer.getEmail());
       existingCustomer.setPhoneNumber(customer.getPhoneNumber());
       return customerRepository.save(existingCustomer);
-    }).orElseThrow(() -> new RuntimeException("Customer not found with id " + id));
+    }).orElseThrow(() -> new EntityNotFoundException("Customer not found with id " + id));
   }
 
   @Override
   public CustomerModel findById(Long id) {
-    return customerRepository.findById(id).orElseThrow(() -> new RuntimeException("Customer not found with id " + id));
+    return customerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Customer not found with id " + id));
   }
 }

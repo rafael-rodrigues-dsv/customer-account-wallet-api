@@ -1,7 +1,8 @@
 package dev.challenge.api.domain.enumeration;
 
 public enum CustomerTypeEnum {
-  PESSOA_FISICA("Pessoa Física"), PESSOA_JURIDICA("Pessoa Jurídica");
+  NATURAL_PERSON("Natural Person"), LEGAL_PERSON("Legal Person");
+
   private final String description;
 
   CustomerTypeEnum(String description) {

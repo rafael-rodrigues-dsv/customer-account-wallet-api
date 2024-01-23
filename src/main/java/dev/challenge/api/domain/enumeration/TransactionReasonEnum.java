@@ -3,12 +3,12 @@ package dev.challenge.api.domain.enumeration;
 import lombok.Getter;
 
 @Getter
-public enum CustomerAddressTypeEnum {
-  RESIDENTIAL("Residential"), COMMERCIAL("Commercial");
+public enum TransactionReasonEnum {
+  TRANSFER("Transfer"), REFUND("Refund");
 
   private final String description;
 
-  CustomerAddressTypeEnum(String description) {
+  TransactionReasonEnum(String description) {
     this.description = description;
   }
 }

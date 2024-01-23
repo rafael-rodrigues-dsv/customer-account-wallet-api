@@ -21,7 +21,6 @@ public class UpdateCustomerAddressCommand implements ServiceCommand<UpdateCustom
   public CustomerAddressDto execute(UpdateCustomerAddressDto updateAddressDto) {
     return customMapper.map(service.update(
             updateAddressDto.getId(),
-            updateAddressDto.getCustomerId(),
             customMapper.map(updateAddressDto, CustomerAddressModel.class)),
         CustomerAddressDto.class);
   }

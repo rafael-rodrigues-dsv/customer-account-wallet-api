@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface CustomerAddressService {
   CustomerAddressModel add(Long customerId, CustomerAddressModel customerAddress);
-  CustomerAddressModel update(Long id, Long customerId, CustomerAddressModel customerAddress);
-  CustomerAddressModel findByIdAndCustomerId(Long id, Long customerId);
+  CustomerAddressModel update(Long id, CustomerAddressModel customerAddress);
+  CustomerAddressModel findById(Long id);
   List<CustomerAddressModel> findAllByCustomerId(Long customerId);
 }

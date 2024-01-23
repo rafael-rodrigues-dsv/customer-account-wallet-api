@@ -14,10 +14,9 @@ import java.math.BigDecimal;
 @Builder
 @Getter
 @Setter
-public class UpdateCustomerAccountDto {
+public class UpdateCustomerAccountBalanceDto {
   @Getter(onMethod = @__(@JsonIgnore))
   @Setter(onMethod = @__(@JsonIgnore))
   private Long id;
-  private String agency;
-  private String accountNumber;
+  private BigDecimal balance;
 }

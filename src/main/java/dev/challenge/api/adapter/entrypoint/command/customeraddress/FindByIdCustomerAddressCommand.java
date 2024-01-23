@@ -18,9 +18,8 @@ public class FindByIdCustomerAddressCommand implements ServiceCommand<FindByIdAn
 
   @Override
   public CustomerAddressDto execute(FindByIdAndCustomerIdFilterDto filterAddressDto) {
-    return customMapper.map(service.findByIdAndCustomerId(
-        filterAddressDto.getId(),
-        filterAddressDto.getCustomerId()), CustomerAddressDto.class);
+    return customMapper.map(service.findById(
+        filterAddressDto.getId()), CustomerAddressDto.class);
   }
 }
 

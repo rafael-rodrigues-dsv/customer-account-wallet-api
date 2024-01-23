@@ -31,6 +31,8 @@ import java.util.List;
 @RequestMapping(value = "/api/v1/customers/{customerId}/customer-addresses")
 @Tag(name = "Customer Addresses", description = "Operations related to Customer Addresses")
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
+@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+@ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
 @io.swagger.v3.oas.annotations.media.Schema(
     name = "application/json",
     implementation = CustomerAddressController.class
@@ -67,8 +69,6 @@ public class CustomerAddressController {
       @RequestBody UpdateCustomerAddressDto updateAddressDto) {
 
     updateAddressDto.setId(id);
-    updateAddressDto.setCustomerId(customerId);
-
     CustomerAddressDto updatedAddressDto = updateCustomerAddressCommand.execute(updateAddressDto);
 
     return updatedAddressDto != null ? ResponseEntity.ok(updatedAddressDto)
@@ -92,7 +92,7 @@ public class CustomerAddressController {
         : ResponseEntity.notFound().build();
   }
 
-  @Operation(summary = "Get All Customer Addresses")
+  @Operation(summary = "Get All Customer Addresses by Customer Id")
   @GetMapping
   public ResponseEntity<List<CustomerAddressDto>> findAllByCustomerId(
       @PathVariable @Parameter(description = "ID of the customer") Long customerId) {

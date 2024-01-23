@@ -1,7 +1,8 @@
 package dev.challenge.api.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import dev.challenge.api.domain.enumeration.CustomerAddressTypeEnum;
+import dev.challenge.api.domain.enumeration.TransactionReasonEnum;
+import dev.challenge.api.domain.enumeration.TransactionTypeEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,14 +20,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "CustomerAddress")
-public class CustomerAddressModel {
+@Table(name = "Transaction")
+public class TransactionModel {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,25 +38,25 @@ public class CustomerAddressModel {
 
   @JsonBackReference
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "customerId", referencedColumnName = "id")
-  private CustomerModel customer;
+  @JoinColumn(name = "transferId", referencedColumnName = "id")
+  private TransferModel transfer;
 
-  @Column(nullable = false, length = 100)
-  private String street;
-
-  @Column(nullable = false, length = 100)
-  private String city;
-
-  @Column(nullable = false, length = 30)
-  private String state;
-
-  @Column(nullable = false, length = 10)
-  private String zipCode;
+  @JsonBackReference
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "accountId", referencedColumnName = "id")
+  private CustomerAccountModel account;
 
   @Column(nullable = false)
-  private Boolean isDefault = Boolean.TRUE;
+  private BigDecimal amount;
+
+  @Column(nullable = false)
+  private LocalDateTime transactionDate;
 
   @Enumerated(EnumType.ORDINAL)
   @Column(nullable = false, length = 15)
-  private CustomerAddressTypeEnum addressType;
+  private TransactionTypeEnum transactionType;
+
+  @Enumerated(EnumType.ORDINAL)
+  @Column(nullable = false, length = 15)
+  private TransactionReasonEnum transactionReason;
 }

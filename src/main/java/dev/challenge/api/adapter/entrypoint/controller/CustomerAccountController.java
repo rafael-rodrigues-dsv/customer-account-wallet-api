@@ -3,6 +3,7 @@ package dev.challenge.api.adapter.entrypoint.controller;
 import dev.challenge.api.adapter.entrypoint.command.ServiceCommand;
 import dev.challenge.api.adapter.entrypoint.dto.customeraccount.CreateCustomerAccountDto;
 import dev.challenge.api.adapter.entrypoint.dto.customeraccount.CustomerAccountDto;
+import dev.challenge.api.adapter.entrypoint.dto.customeraccount.UpdateCustomerAccountBalanceDto;
 import dev.challenge.api.adapter.entrypoint.dto.customeraccount.UpdateCustomerAccountDto;
 import dev.challenge.api.adapter.entrypoint.dto.filter.FindByIdAndCustomerIdFilterDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +32,8 @@ import java.util.List;
 @RequestMapping(value = "/api/v1/customers/{customerId}/customer-accounts")
 @Tag(name = "Customer Accounts", description = "Operations related to Customer Accounts")
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
+@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+@ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
 @io.swagger.v3.oas.annotations.media.Schema(
     name = "application/json",
     implementation = CustomerAddressController.class
@@ -40,10 +43,11 @@ public class CustomerAccountController {
 
   private final ServiceCommand<CreateCustomerAccountDto, CustomerAccountDto> createCustomerAccountCommand;
   private final ServiceCommand<UpdateCustomerAccountDto, CustomerAccountDto> updateCustomerAccountCommand;
+  private final ServiceCommand<UpdateCustomerAccountBalanceDto, CustomerAccountDto> updateCustomerAccountBalanceCommand;
   private final ServiceCommand<FindByIdAndCustomerIdFilterDto, CustomerAccountDto> findByIdCustomerAccountCommand;
   private final ServiceCommand<Long, List<CustomerAccountDto>> findAllCustomerAccountCommand;
 
-  @Operation(summary = "Create a Customer Account")
+  @Operation(summary = "Create an Account")
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<CustomerAccountDto> create(
@@ -63,13 +67,23 @@ public class CustomerAccountController {
   @PatchMapping("/{id}")
   public ResponseEntity<CustomerAccountDto> update(
       @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
-      @PathVariable @Parameter(description = "ID of the customer") Long customerId,
       @RequestBody UpdateCustomerAccountDto updateCustomerAccountDto) {
 
     updateCustomerAccountDto.setId(id);
-    updateCustomerAccountDto.setCustomerId(customerId);
-
     CustomerAccountDto updatedAccount = updateCustomerAccountCommand.execute(updateCustomerAccountDto);
+
+    return updatedAccount != null ? ResponseEntity.ok(updatedAccount)
+        : ResponseEntity.notFound().build();
+  }
+
+  @Operation(summary = "Update a Customer Account Balance by ID")
+  @PatchMapping("/{id}/balance")
+  public ResponseEntity<CustomerAccountDto> updateBalance(
+      @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
+      @RequestBody UpdateCustomerAccountBalanceDto updateCustomerAccountDto) {
+
+    updateCustomerAccountDto.setId(id);
+    CustomerAccountDto updatedAccount = updateCustomerAccountBalanceCommand.execute(updateCustomerAccountDto);
 
     return updatedAccount != null ? ResponseEntity.ok(updatedAccount)
         : ResponseEntity.notFound().build();
@@ -92,7 +106,7 @@ public class CustomerAccountController {
         : ResponseEntity.notFound().build();
   }
 
-  @Operation(summary = "Get All Customer Accounts")
+  @Operation(summary = "Get All Accounts by Customer Id")
   @GetMapping
   public ResponseEntity<List<CustomerAccountDto>> findAllByCustomerId(
       @PathVariable @Parameter(description = "ID of the customer") Long customerId) {

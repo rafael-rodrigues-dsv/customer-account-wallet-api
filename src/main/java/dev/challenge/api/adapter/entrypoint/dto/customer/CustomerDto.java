@@ -24,5 +24,5 @@ public class CustomerDto {
   private String email;
   private String phoneNumber;
   private Set<CustomerAddressDto> customerAddresses;
-  private Set<CustomerAccountDto> customerBankAccounts;
+  private Set<CustomerAccountDto> customerAccounts;
 }

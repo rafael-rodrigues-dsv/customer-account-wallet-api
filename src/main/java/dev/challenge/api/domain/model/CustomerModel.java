@@ -56,5 +56,5 @@ public class CustomerModel {
 
   @JsonManagedReference
   @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<CustomerAccountModel> customerBankAccount;
+  private Set<CustomerAccountModel> customerAccounts;
 }

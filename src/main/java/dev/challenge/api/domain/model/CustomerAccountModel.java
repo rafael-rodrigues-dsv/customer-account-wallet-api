@@ -43,8 +43,8 @@ public class CustomerAccountModel {
   private String accountNumber;
 
   @Column(nullable = false)
-  private BigDecimal balance;
+  private BigDecimal balance = BigDecimal.ZERO;
 
   @Column(nullable = false)
-  private Boolean isDefault = true;
+  private Boolean isDefault = Boolean.TRUE;
 }

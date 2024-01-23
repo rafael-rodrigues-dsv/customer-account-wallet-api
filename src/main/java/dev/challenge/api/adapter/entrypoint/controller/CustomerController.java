@@ -30,6 +30,8 @@ import java.net.URI;
 @RequestMapping(value = "/api/v1/customers")
 @Tag(name = "Customers", description = "Operations related to Customers")
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
+@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+@ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CustomerController {
 

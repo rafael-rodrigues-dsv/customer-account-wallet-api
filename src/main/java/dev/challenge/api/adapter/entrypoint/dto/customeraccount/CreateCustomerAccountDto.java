@@ -21,5 +21,4 @@ public class CreateCustomerAccountDto {
   private Long customerId;
   private String agency;
   private String accountNumber;
-  private BigDecimal balance;
 }

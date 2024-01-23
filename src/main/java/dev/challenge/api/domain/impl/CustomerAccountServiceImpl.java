@@ -2,9 +2,10 @@ package dev.challenge.api.domain.impl;
 
 import dev.challenge.api.adapter.database.repository.CustomerAccountRepository;
 import dev.challenge.api.domain.CustomerAccountService;
+import dev.challenge.api.domain.CustomerService;
 import dev.challenge.api.domain.model.CustomerAccountModel;
-import dev.challenge.api.domain.model.CustomerAddressModel;
 import dev.challenge.api.domain.model.CustomerModel;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -18,16 +19,15 @@ import java.util.List;
 public class CustomerAccountServiceImpl implements CustomerAccountService {
 
   private final CustomerAccountRepository customerAccountRepository;
-  private final CustomerServiceImpl customerService;
+  private final CustomerService customerService;
 
   @Override
-  public CustomerAccountModel add(Long customerId, CustomerAccountModel customerAddress) {
-
+  public CustomerAccountModel add(Long customerId, CustomerAccountModel customerAccount) {
     CustomerAccountModel newAccount = CustomerAccountModel.builder()
         .customer(customerService.findById(customerId))
-        .agency(customerAddress.getAgency())
-        .accountNumber(customerAddress.getAccountNumber())
-        .balance(customerAddress.getBalance())
+        .agency(customerAccount.getAgency())
+        .accountNumber(customerAccount.getAccountNumber())
+        .balance(customerAccount.getBalance())
         .isDefault(hasDefaultByCustomerId(customerId) ? Boolean.FALSE : Boolean.TRUE)
         .build();
 
@@ -35,10 +35,25 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
   }
 
   @Override
-  public CustomerAccountModel update(Long id, Long customerId, CustomerAccountModel customerBankAccount) {
-    CustomerAccountModel existingAccount = findByIdAndCustomerId(id, customerId);
-    existingAccount.setBalance(customerBankAccount.getBalance());
+  public CustomerAccountModel update(Long id, CustomerAccountModel customerAccount) {
+    CustomerAccountModel existingAccount = findById(id);
+    existingAccount.setAgency(customerAccount.getAgency());
+    existingAccount.setAccountNumber(customerAccount.getAccountNumber());
     return customerAccountRepository.save(existingAccount);
+  }
+
+  @Override
+  public CustomerAccountModel updateBalance(Long id, BigDecimal balance) {
+    return customerAccountRepository.findById(id).map(existingCustomer -> {
+      existingCustomer.setBalance(balance);
+      return customerAccountRepository.save(existingCustomer);
+    }).orElseThrow(() -> new EntityNotFoundException("Account not found with id " + id));
+  }
+
+  @Override
+  public CustomerAccountModel findById(Long id) {
+    return customerAccountRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("Customer Account not found with id " + id));
   }
 
   @Override
@@ -48,11 +63,10 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
         .customer(CustomerModel.builder().id(customerId).build())
         .build());
 
-    return customerAccountRepository
-        .findAll(filter)
+    return customerAccountRepository.findAll(filter)
         .stream()
         .findFirst()
-        .orElseThrow(() -> new RuntimeException("CustomerBankAccount not found with CustomerId " + customerId + " and CustomerBankAccountId " + id));
+        .orElseThrow(() -> new EntityNotFoundException("Account not found with CustomerId " + customerId + " and CustomerBankAccountId " + id));
   }
 
   @Override
@@ -66,15 +80,12 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
         .toList();
   }
 
-  private boolean hasDefaultByCustomerId(Long customerId) {
+  private Boolean hasDefaultByCustomerId(Long customerId) {
     Example<CustomerAccountModel> filter = Example.of(CustomerAccountModel.builder()
         .customer(CustomerModel.builder().id(customerId).build())
         .isDefault(Boolean.TRUE)
         .build());
 
-    return customerAccountRepository
-        .findAll(filter)
-        .stream()
-        .count() > 0;
+    return customerAccountRepository.exists(filter);
   }
 }
