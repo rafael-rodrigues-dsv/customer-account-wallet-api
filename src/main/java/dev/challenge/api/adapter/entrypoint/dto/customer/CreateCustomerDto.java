@@ -3,6 +3,7 @@ package dev.challenge.api.adapter.entrypoint.dto.customer;
 import dev.challenge.api.domain.enumeration.CustomerTypeEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import lombok.Setter;
 @Setter
 public class CreateCustomerDto {
 
-  @NotBlank(message = "Customer type is mandatory")
+  @NotNull(message = "Customer type is mandatory")
   private CustomerTypeEnum customerType;
 
   @NotBlank(message = "Document number is mandatory")

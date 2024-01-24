@@ -43,7 +43,7 @@ public class CustomerController {
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<CustomerDto> create(
       @RequestBody @Parameter(description = "Customer data to be created")
-      CreateCustomerDto createCustomerDto) {
+      @Valid CreateCustomerDto createCustomerDto) {
 
     CustomerDto createdCustomer = createCustomerCommand.execute(createCustomerDto);
 
