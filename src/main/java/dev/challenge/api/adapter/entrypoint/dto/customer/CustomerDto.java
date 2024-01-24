@@ -1,7 +1,7 @@
 package dev.challenge.api.adapter.entrypoint.dto.customer;
 
-import dev.challenge.api.adapter.entrypoint.dto.customeraddress.CustomerAddressDto;
 import dev.challenge.api.adapter.entrypoint.dto.customeraccount.CustomerAccountDto;
+import dev.challenge.api.adapter.entrypoint.dto.customeraddress.CustomerAddressDto;
 import dev.challenge.api.domain.enumeration.CustomerTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

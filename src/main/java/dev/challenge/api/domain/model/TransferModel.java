@@ -2,7 +2,6 @@ package dev.challenge.api.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import dev.challenge.api.domain.enumeration.TransactionTypeEnum;
 import dev.challenge.api.domain.enumeration.TransferStatusEnum;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

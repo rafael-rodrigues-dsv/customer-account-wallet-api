@@ -1,11 +1,8 @@
 package dev.challenge.api.adapter.entrypoint.dto.transaction;
 
 import dev.challenge.api.adapter.entrypoint.dto.customeraccount.CustomerAccountDto;
-import dev.challenge.api.adapter.entrypoint.dto.transfer.TransferDto;
 import dev.challenge.api.domain.enumeration.TransactionReasonEnum;
 import dev.challenge.api.domain.enumeration.TransactionTypeEnum;
-import dev.challenge.api.domain.model.CustomerAccountModel;
-import dev.challenge.api.domain.model.TransferModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

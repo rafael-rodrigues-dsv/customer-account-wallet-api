@@ -2,8 +2,6 @@ package dev.challenge.api.domain.impl;
 
 import dev.challenge.api.adapter.database.repository.TransactionRepository;
 import dev.challenge.api.domain.TransactionService;
-import dev.challenge.api.domain.model.CustomerAddressModel;
-import dev.challenge.api.domain.model.CustomerModel;
 import dev.challenge.api.domain.model.TransactionModel;
 import dev.challenge.api.domain.model.TransferModel;
 import lombok.RequiredArgsConstructor;

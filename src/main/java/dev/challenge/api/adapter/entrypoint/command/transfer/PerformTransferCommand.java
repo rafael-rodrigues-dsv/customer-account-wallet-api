@@ -1,7 +1,6 @@
 package dev.challenge.api.adapter.entrypoint.command.transfer;
 
 import dev.challenge.api.adapter.entrypoint.command.ServiceCommand;
-import dev.challenge.api.adapter.entrypoint.dto.customeraddress.CustomerAddressDto;
 import dev.challenge.api.adapter.entrypoint.dto.transfer.PerformTransferDto;
 import dev.challenge.api.adapter.entrypoint.dto.transfer.TransferDto;
 import dev.challenge.api.adapter.entrypoint.mapper.CustomMapper;
