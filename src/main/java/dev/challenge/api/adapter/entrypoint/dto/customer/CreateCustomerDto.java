@@ -41,4 +41,10 @@ public class CreateCustomerDto {
   @Size(min = 11, max = 11, message = "Phone number must be 11 characters")
   @Pattern(regexp = "^(\\d{11})$", message = "Invalid phone number")
   private String phoneNumber;
+
+  @NotNull(message = "Password is mandatory")
+  @NotBlank(message = "Password cannot be blank")
+  @Size(max = 16, message = "Password must have at most 16 characters")
+  @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]*$", message = "Invalid password format. Should contain letters, numbers, and special characters.")
+  private String password;
 }

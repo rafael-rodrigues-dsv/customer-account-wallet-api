@@ -1,6 +1,7 @@
 package dev.challenge.api.adapter.entrypoint.controller;
 
 import dev.challenge.api.adapter.entrypoint.command.ServiceCommand;
+import dev.challenge.api.adapter.entrypoint.dto.customer.CheckCustomerPasswordDto;
 import dev.challenge.api.adapter.entrypoint.dto.customer.CreateCustomerDto;
 import dev.challenge.api.adapter.entrypoint.dto.customer.CustomerDto;
 import dev.challenge.api.adapter.entrypoint.dto.customer.UpdateCustomerDto;
@@ -41,6 +42,7 @@ public class CustomerController {
   private final ServiceCommand<CreateCustomerDto, CustomerDto> createCustomerCommand;
   private final ServiceCommand<UpdateCustomerDto, CustomerDto> updateCustomerCommand;
   private final ServiceCommand<Long, CustomerDto> findByIdCommand;
+  private final ServiceCommand<CheckCustomerPasswordDto, Boolean> checkCustomerPasswordCommand;
 
   @Operation(summary = "Create a Customer")
   @PostMapping
@@ -80,5 +82,21 @@ public class CustomerController {
 
     return customer != null ? ResponseEntity.ok(customer)
         : ResponseEntity.notFound().build();
+  }
+
+  @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
+  @Operation(summary = "Check a password for Customer by ID")
+  @PostMapping("/{id}/check-password")
+  public ResponseEntity<Boolean> checkPassword(
+      @PathVariable @Parameter(description = "ID of the customer to be checked") Long id,
+      @Valid @RequestBody CheckCustomerPasswordDto passwordToBeChecked) {
+    passwordToBeChecked.setId(id);
+    passwordToBeChecked.setPassword(passwordToBeChecked.getPassword());
+
+    Boolean isValidPassword = checkCustomerPasswordCommand.execute(passwordToBeChecked);
+
+    return isValidPassword
+        ? ResponseEntity.ok(isValidPassword)
+        : ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
   }
 }

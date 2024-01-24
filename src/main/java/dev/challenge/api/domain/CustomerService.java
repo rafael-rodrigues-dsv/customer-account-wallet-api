@@ -6,4 +6,5 @@ public interface CustomerService {
   CustomerModel add(CustomerModel customer);
   CustomerModel update(Long id, CustomerModel customer);
   CustomerModel findById(Long id);
+  Boolean checkPassword(Long id, String password);
 }

@@ -41,11 +41,17 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Spring Security library for security features -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
 		<!-- Springdoc OpenAPI Starter for Spring Web MVC -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.0.2</version>
+			<version>2.3.0</version>
 		</dependency>
 
 		<!-- Swagger Annotations -->

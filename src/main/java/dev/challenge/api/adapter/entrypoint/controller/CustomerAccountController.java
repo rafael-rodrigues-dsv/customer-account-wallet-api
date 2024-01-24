@@ -83,7 +83,7 @@ public class CustomerAccountController {
   @ApiResponse(responseCode = "200", description = "OK", content = @Content)
   @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
   @Operation(summary = "Update a Customer Account Balance by ID")
-  @PatchMapping("/{id}/balance")
+  @PatchMapping("/{id}/update-balance")
   public ResponseEntity<CustomerAccountDto> updateBalance(
       @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
       @RequestBody @Valid UpdateCustomerAccountBalanceDto updateCustomerAccountDto) {
@@ -98,7 +98,7 @@ public class CustomerAccountController {
   @ApiResponse(responseCode = "200", description = "OK", content = @Content)
   @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
   @Operation(summary = "Update a Customer Account Status by ID")
-  @PatchMapping("/{id}/account-status")
+  @PatchMapping("/{id}/update-account-status")
   public ResponseEntity<CustomerAccountDto> updateAccountStatus(
       @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
       @RequestBody @Valid UpdateCustomerAccountStatusDto updateCustomerAccountDto) {
