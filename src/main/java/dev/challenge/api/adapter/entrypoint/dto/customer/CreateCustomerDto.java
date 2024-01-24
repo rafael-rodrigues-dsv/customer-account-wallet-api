@@ -18,25 +18,25 @@ import lombok.Setter;
 @Setter
 public class CreateCustomerDto {
 
-  @NotBlank(message = "O tipo de pessoa é obrigatório")
+  @NotBlank(message = "Customer type is mandatory")
   private CustomerTypeEnum customerType;
 
-  @NotBlank(message = "O número do documento é obrigatório")
-  @Size(min = 11, max = 14, message = "O número do documento deve ter entre 11 e 14 caracteres")
-  @Pattern(regexp = "^(\\d{11})|(\\d{14})$", message = "Número do documento inválido")
+  @NotBlank(message = "Document number is mandatory")
+  @Size(min = 11, max = 14, message = "Document number must be between 11 and 14 characters")
+  @Pattern(regexp = "^(\\d{11})|(\\d{14})$", message = "Invalid document number")
   private String documentNumber;
 
-  @NotBlank(message = "O nome é obrigatório")
-  @Size(max = 150, message = "O nome deve ter no máximo 150 caracteres")
+  @NotBlank(message = "Name is mandatory")
+  @Size(max = 150, message = "Name must be at most 150 characters")
   private String name;
 
-  @NotBlank(message = "O e-mail é obrigatório")
-  @Email(message = "Endereço de e-mail inválido")
-  @Size(max = 35, message = "O e-mail deve ter no máximo 35 caracteres")
+  @NotBlank(message = "Email is mandatory")
+  @Email(message = "Invalid email address")
+  @Size(max = 35, message = "Email must be at most 35 characters")
   private String email;
 
-  @NotBlank(message = "O número de telefone é obrigatório")
-  @Size(min = 11, max = 11, message = "O número de telefone deve ter 11 caracteres")
-  @Pattern(regexp = "^(\\d{11})$", message = "Número de telefone inválido")
+  @NotBlank(message = "Phone number is mandatory")
+  @Size(min = 11, max = 11, message = "Phone number must be 11 characters")
+  @Pattern(regexp = "^(\\d{11})$", message = "Invalid phone number")
   private String phoneNumber;
 }

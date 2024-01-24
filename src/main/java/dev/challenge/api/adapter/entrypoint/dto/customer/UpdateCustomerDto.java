@@ -22,17 +22,17 @@ public class UpdateCustomerDto {
   @Setter(onMethod = @__(@JsonIgnore))
   private Long id;
 
-  @NotBlank(message = "O nome é obrigatório")
-  @Size(max = 150, message = "O nome deve ter no máximo 150 caracteres")
+  @NotBlank(message = "Name is mandatory")
+  @Size(max = 150, message = "Name must be at most 150 characters")
   private String name;
 
-  @NotBlank(message = "O endereço de e-mail é obrigatório")
-  @Email(message = "Endereço de e-mail inválido")
-  @Size(max = 35, message = "O e-mail deve ter no máximo 35 caracteres")
+  @NotBlank(message = "Email address is mandatory")
+  @Email(message = "Invalid email address")
+  @Size(max = 35, message = "Email must be at most 35 characters")
   private String email;
 
-  @NotBlank(message = "O número de telefone é obrigatório")
-  @Size(min = 11, max = 11, message = "O número de telefone deve ter 11 caracteres")
-  @Pattern(regexp = "^(\\d{11})$", message = "Número de telefone inválido")
+  @NotBlank(message = "Phone number is mandatory")
+  @Size(min = 11, max = 11, message = "Phone number must be 11 characters")
+  @Pattern(regexp = "^(\\d{11})$", message = "Invalid phone number")
   private String phoneNumber;
 }
