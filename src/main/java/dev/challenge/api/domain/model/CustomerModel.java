@@ -38,7 +38,7 @@ public class CustomerModel {
   @Column(nullable = false, length = 15)
   private CustomerTypeEnum customerType;
 
-  @Column(nullable = false, length = 20)
+  @Column(nullable = false, length = 20, unique = true)
   private String documentNumber;
 
   @Column(nullable = false, length = 150)

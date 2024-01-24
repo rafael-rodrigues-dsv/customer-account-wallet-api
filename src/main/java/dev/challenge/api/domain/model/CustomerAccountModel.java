@@ -42,7 +42,7 @@ public class CustomerAccountModel {
   @Column(nullable = false, length = 10)
   private String agency;
 
-  @Column(nullable = false, length = 15)
+  @Column(nullable = false, length = 15, unique = true)
   private String accountNumber;
 
   @Column(nullable = false)

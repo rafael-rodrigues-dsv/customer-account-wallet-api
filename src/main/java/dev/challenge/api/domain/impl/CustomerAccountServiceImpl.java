@@ -25,6 +25,10 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
 
   @Override
   public CustomerAccountModel add(Long customerId, CustomerAccountModel customerAccount) {
+    if (hasAccountWithAccountNumber(customerAccount.getAccountNumber())) {
+      throw new BusinessException("An account with document number " + customerAccount.getAccountNumber() + " already exists.");
+    }
+
     CustomerAccountModel newAccount = CustomerAccountModel.builder()
         .customer(customerService.findById(customerId))
         .agency(customerAccount.getAgency())
@@ -105,6 +109,14 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
     Example<CustomerAccountModel> filter = Example.of(CustomerAccountModel.builder()
         .customer(CustomerModel.builder().id(customerId).build())
         .isDefault(Boolean.TRUE)
+        .build());
+
+    return customerAccountRepository.exists(filter);
+  }
+
+  private Boolean hasAccountWithAccountNumber(String document) {
+    Example<CustomerAccountModel> filter = Example.of(CustomerAccountModel.builder()
+        .accountNumber(document)
         .build());
 
     return customerAccountRepository.exists(filter);
