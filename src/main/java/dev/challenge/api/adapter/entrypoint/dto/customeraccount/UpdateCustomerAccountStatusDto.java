@@ -1,6 +1,9 @@
 package dev.challenge.api.adapter.entrypoint.dto.customeraccount;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.challenge.api.domain.enumeration.CustomerAccountStatusEnum;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,11 +17,11 @@ import java.math.BigDecimal;
 @Builder
 @Getter
 @Setter
-public class CustomerAccountDto {
+public class UpdateCustomerAccountStatusDto {
+  @Getter(onMethod = @__(@JsonIgnore))
+  @Setter(onMethod = @__(@JsonIgnore))
   private Long id;
-  private String agency;
-  private String accountNumber;
-  private BigDecimal balance;
-  private Boolean isDefault;
-  private CustomerAccountStatusEnum accountStatus;
+
+  @NotNull(message = "Account Status is mandatory")
+  CustomerAccountStatusEnum accountStatus;
 }

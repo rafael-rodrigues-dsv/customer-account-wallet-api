@@ -4,6 +4,7 @@ import dev.challenge.api.adapter.database.repository.TransferRepository;
 import dev.challenge.api.domain.CustomerAccountService;
 import dev.challenge.api.domain.TransactionService;
 import dev.challenge.api.domain.TransferService;
+import dev.challenge.api.domain.enumeration.CustomerAccountStatusEnum;
 import dev.challenge.api.domain.enumeration.TransactionReasonEnum;
 import dev.challenge.api.domain.enumeration.TransactionTypeEnum;
 import dev.challenge.api.domain.enumeration.TransferStatusEnum;
@@ -33,9 +34,7 @@ public class TransferServiceImpl implements TransferService {
     CustomerAccountModel debitAccount = customerAccountService.findById(debitAccountId);
     CustomerAccountModel creditAccount = customerAccountService.findById(creditAccountId);
 
-    if (debitAccount.getBalance().doubleValue() < amount.doubleValue()) {
-      throw new BusinessException("Insufficient balance in the debit account");
-    }
+    verifyAccount(debitAccount, creditAccount);
 
     customerAccountService.updateBalance(debitAccount.getId(), debitAccount.getBalance().subtract(amount));
     customerAccountService.updateBalance(creditAccount.getId(), creditAccount.getBalance().add(amount));
@@ -83,6 +82,8 @@ public class TransferServiceImpl implements TransferService {
     CustomerAccountModel creditAccount = customerAccountService.findById(transferToCancel.getCreditAccount().getId());
     BigDecimal amount = transferToCancel.getAmount();
 
+    verifyAccount(debitAccount, creditAccount);
+
     customerAccountService.updateBalance(debitAccount.getId(), debitAccount.getBalance().add(amount));
     customerAccountService.updateBalance(creditAccount.getId(), creditAccount.getBalance().subtract(amount));
 
@@ -117,5 +118,17 @@ public class TransferServiceImpl implements TransferService {
   public TransferModel findById(Long id) {
     return transferRepository.findById(id)
         .orElseThrow(() -> new EntityNotFoundException("Transfer not found with id " + id));
+  }
+
+  private void verifyAccount(CustomerAccountModel debitAccount, CustomerAccountModel creditAccount) {
+    if (!debitAccount.getAccountStatus().equals(CustomerAccountStatusEnum.ACTIVE)) {
+      throw new BusinessException("Transfer cannot be completed because the debit account with id "
+          + debitAccount.getId() + " is not active");
+    }
+
+    if (!creditAccount.getAccountStatus().equals(CustomerAccountStatusEnum.ACTIVE)) {
+      throw new BusinessException("Transfer cannot be completed because the credit account with id "
+          + creditAccount.getId() + " is not active");
+    }
   }
 }

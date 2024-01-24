@@ -1,8 +1,11 @@
 package dev.challenge.api.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import dev.challenge.api.domain.enumeration.CustomerAccountStatusEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -47,4 +50,8 @@ public class CustomerAccountModel {
 
   @Column(nullable = false)
   private Boolean isDefault = Boolean.TRUE;
+
+  @Enumerated(EnumType.ORDINAL)
+  @Column(nullable = false, length = 15)
+  private CustomerAccountStatusEnum accountStatus = CustomerAccountStatusEnum.ACTIVE;
 }

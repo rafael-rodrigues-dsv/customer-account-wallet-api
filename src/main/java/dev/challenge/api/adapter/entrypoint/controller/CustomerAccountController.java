@@ -5,6 +5,7 @@ import dev.challenge.api.adapter.entrypoint.dto.customeraccount.CreateCustomerAc
 import dev.challenge.api.adapter.entrypoint.dto.customeraccount.CustomerAccountDto;
 import dev.challenge.api.adapter.entrypoint.dto.customeraccount.UpdateCustomerAccountBalanceDto;
 import dev.challenge.api.adapter.entrypoint.dto.customeraccount.UpdateCustomerAccountDto;
+import dev.challenge.api.adapter.entrypoint.dto.customeraccount.UpdateCustomerAccountStatusDto;
 import dev.challenge.api.adapter.entrypoint.dto.filter.FindByIdAndCustomerIdFilterDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -44,6 +45,7 @@ public class CustomerAccountController {
   private final ServiceCommand<CreateCustomerAccountDto, CustomerAccountDto> createCustomerAccountCommand;
   private final ServiceCommand<UpdateCustomerAccountDto, CustomerAccountDto> updateCustomerAccountCommand;
   private final ServiceCommand<UpdateCustomerAccountBalanceDto, CustomerAccountDto> updateCustomerAccountBalanceCommand;
+  private final ServiceCommand<UpdateCustomerAccountStatusDto, CustomerAccountDto> updateCustomerAccountStatusCommand;
   private final ServiceCommand<FindByIdAndCustomerIdFilterDto, CustomerAccountDto> findByIdCustomerAccountCommand;
   private final ServiceCommand<Long, List<CustomerAccountDto>> findAllCustomerAccountCommand;
 
@@ -88,6 +90,21 @@ public class CustomerAccountController {
 
     updateCustomerAccountDto.setId(id);
     CustomerAccountDto updatedAccount = updateCustomerAccountBalanceCommand.execute(updateCustomerAccountDto);
+
+    return updatedAccount != null ? ResponseEntity.ok(updatedAccount)
+        : ResponseEntity.notFound().build();
+  }
+
+  @ApiResponse(responseCode = "200", description = "OK", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
+  @Operation(summary = "Update a Customer Account Status by ID")
+  @PatchMapping("/{id}/account-status")
+  public ResponseEntity<CustomerAccountDto> updateAccountStatus(
+      @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
+      @RequestBody @Valid UpdateCustomerAccountStatusDto updateCustomerAccountDto) {
+
+    updateCustomerAccountDto.setId(id);
+    CustomerAccountDto updatedAccount = updateCustomerAccountStatusCommand.execute(updateCustomerAccountDto);
 
     return updatedAccount != null ? ResponseEntity.ok(updatedAccount)
         : ResponseEntity.notFound().build();

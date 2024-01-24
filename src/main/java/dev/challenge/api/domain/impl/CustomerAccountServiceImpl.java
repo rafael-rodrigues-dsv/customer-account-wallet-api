@@ -3,8 +3,10 @@ package dev.challenge.api.domain.impl;
 import dev.challenge.api.adapter.database.repository.CustomerAccountRepository;
 import dev.challenge.api.domain.CustomerAccountService;
 import dev.challenge.api.domain.CustomerService;
+import dev.challenge.api.domain.enumeration.CustomerAccountStatusEnum;
 import dev.challenge.api.domain.model.CustomerAccountModel;
 import dev.challenge.api.domain.model.CustomerModel;
+import dev.challenge.api.exception.BusinessException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
         .accountNumber(customerAccount.getAccountNumber())
         .balance(customerAccount.getBalance())
         .isDefault(hasDefaultByCustomerId(customerId) ? Boolean.FALSE : Boolean.TRUE)
+        .accountStatus(CustomerAccountStatusEnum.ACTIVE)
         .build();
 
     return customerAccountRepository.save(newAccount);
@@ -44,9 +47,27 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
 
   @Override
   public CustomerAccountModel updateBalance(Long id, BigDecimal balance) {
-    return customerAccountRepository.findById(id).map(existingCustomer -> {
-      existingCustomer.setBalance(balance);
-      return customerAccountRepository.save(existingCustomer);
+    return customerAccountRepository.findById(id).map(existingAccount -> {
+      CustomerAccountStatusEnum accountStatus = existingAccount.getAccountStatus();
+
+      if (!accountStatus.equals(CustomerAccountStatusEnum.ACTIVE)) {
+        if (accountStatus.equals(CustomerAccountStatusEnum.BLOCKED)) {
+          throw new BusinessException("Balance cannot be updated because Account is blocked with id " + id);
+        } else {
+          throw new BusinessException("Balance cannot be updated because Account is disabled with id " + id);
+        }
+      }
+
+      existingAccount.setBalance(balance);
+      return customerAccountRepository.save(existingAccount);
+    }).orElseThrow(() -> new EntityNotFoundException("Account not found with id " + id));
+  }
+
+  @Override
+  public CustomerAccountModel updateAccountStatus(Long id, CustomerAccountStatusEnum accountStatus) {
+    return customerAccountRepository.findById(id).map(existingAccount -> {
+      existingAccount.setAccountStatus(accountStatus);
+      return customerAccountRepository.save(existingAccount);
     }).orElseThrow(() -> new EntityNotFoundException("Account not found with id " + id));
   }
 
