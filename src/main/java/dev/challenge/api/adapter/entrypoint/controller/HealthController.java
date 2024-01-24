@@ -1,5 +1,7 @@
 package dev.challenge.api.adapter.entrypoint.controller;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class HealthController {
 
+  @ApiResponse(responseCode = "200", description = "OK", content = @Content)
   @GetMapping
   public String checkHealth() {
     return "Health Check: Application is running successfully!";

@@ -32,7 +32,6 @@ import java.util.List;
 @Tag(name = "Customer Addresses", description = "Operations related to Customer Addresses")
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
-@ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
 @io.swagger.v3.oas.annotations.media.Schema(
     name = "application/json",
     implementation = CustomerAddressController.class
@@ -61,6 +60,8 @@ public class CustomerAddressController {
     return ResponseEntity.created(location).body(createdAddress);
   }
 
+  @ApiResponse(responseCode = "200", description = "OK", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
   @Operation(summary = "Update a Customer Address by ID")
   @PatchMapping("/{id}")
   public ResponseEntity<CustomerAddressDto> update(
@@ -75,6 +76,8 @@ public class CustomerAddressController {
         : ResponseEntity.notFound().build();
   }
 
+  @ApiResponse(responseCode = "200", description = "OK", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
   @Operation(summary = "Get a Customer Address by ID")
   @GetMapping("/{id}")
   public ResponseEntity<CustomerAddressDto> findByIdAndCustomerId(
@@ -92,6 +95,8 @@ public class CustomerAddressController {
         : ResponseEntity.notFound().build();
   }
 
+  @ApiResponse(responseCode = "200", description = "OK", content = @Content)
+  @ApiResponse(responseCode = "204", description = "No Content")
   @Operation(summary = "Get All Customer Addresses by Customer Id")
   @GetMapping
   public ResponseEntity<List<CustomerAddressDto>> findAllByCustomerId(

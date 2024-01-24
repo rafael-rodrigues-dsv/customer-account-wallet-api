@@ -33,7 +33,6 @@ import java.util.List;
 @Tag(name = "Customer Accounts", description = "Operations related to Customer Accounts")
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
-@ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
 @io.swagger.v3.oas.annotations.media.Schema(
     name = "application/json",
     implementation = CustomerAddressController.class
@@ -63,6 +62,8 @@ public class CustomerAccountController {
     return ResponseEntity.created(location).body(createdAccount);
   }
 
+  @ApiResponse(responseCode = "200", description = "OK", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
   @Operation(summary = "Update a Customer Account by ID")
   @PatchMapping("/{id}")
   public ResponseEntity<CustomerAccountDto> update(
@@ -76,6 +77,8 @@ public class CustomerAccountController {
         : ResponseEntity.notFound().build();
   }
 
+  @ApiResponse(responseCode = "200", description = "OK", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
   @Operation(summary = "Update a Customer Account Balance by ID")
   @PatchMapping("/{id}/balance")
   public ResponseEntity<CustomerAccountDto> updateBalance(
@@ -89,6 +92,8 @@ public class CustomerAccountController {
         : ResponseEntity.notFound().build();
   }
 
+  @ApiResponse(responseCode = "200", description = "OK", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
   @Operation(summary = "Get a Customer Account by ID")
   @GetMapping("/{id}")
   public ResponseEntity<CustomerAccountDto> findByIdAndCustomerId(
@@ -106,6 +111,8 @@ public class CustomerAccountController {
         : ResponseEntity.notFound().build();
   }
 
+  @ApiResponse(responseCode = "200", description = "OK", content = @Content)
+  @ApiResponse(responseCode = "204", description = "No Content")
   @Operation(summary = "Get All Accounts by Customer Id")
   @GetMapping
   public ResponseEntity<List<CustomerAccountDto>> findAllByCustomerId(

@@ -30,7 +30,6 @@ import java.net.URI;
 @Tag(name = "Transfers", description = "Operations related to Transfers")
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
-@ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TransferController {
 
@@ -53,6 +52,7 @@ public class TransferController {
     return ResponseEntity.created(location).body(createdTransfer);
   }
 
+  @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
   @Operation(summary = "Cancel a Transfer")
   @DeleteMapping("/{id}")
   public ResponseEntity<TransferDto> update(
@@ -68,6 +68,7 @@ public class TransferController {
         : ResponseEntity.notFound().build();
   }
 
+  @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
   @Operation(summary = "Get a Transfer by ID")
   @GetMapping("/{id}")
   public ResponseEntity<TransferDto> findById(

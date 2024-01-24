@@ -31,7 +31,6 @@ import java.net.URI;
 @Tag(name = "Customers", description = "Operations related to Customers")
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
-@ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CustomerController {
 
@@ -54,6 +53,7 @@ public class CustomerController {
     return ResponseEntity.created(location).body(createdCustomer);
   }
 
+  @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
   @Operation(summary = "Update a Customer by ID")
   @PatchMapping("/{id}")
   public ResponseEntity<CustomerDto> update(
@@ -67,6 +67,7 @@ public class CustomerController {
         : ResponseEntity.notFound().build();
   }
 
+  @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
   @Operation(summary = "Get a Customer by ID")
   @GetMapping("/{id}")
   public ResponseEntity<CustomerDto> getById(
