@@ -31,6 +31,10 @@ import java.net.URI;
 @Tag(name = "Customers", description = "Operations related to Customers")
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+@io.swagger.v3.oas.annotations.media.Schema(
+    name = "application/json",
+    implementation = CustomerController.class
+)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CustomerController {
 
@@ -42,8 +46,7 @@ public class CustomerController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<CustomerDto> create(
-      @RequestBody @Parameter(description = "Customer data to be created")
-      @Valid CreateCustomerDto createCustomerDto) {
+      @Valid @RequestBody CreateCustomerDto createCustomerDto) {
 
     CustomerDto createdCustomer = createCustomerCommand.execute(createCustomerDto);
 

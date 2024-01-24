@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ import java.util.List;
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
 @io.swagger.v3.oas.annotations.media.Schema(
     name = "application/json",
-    implementation = CustomerAddressController.class
+    implementation = CustomerAccountController.class
 )
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CustomerAccountController {
@@ -51,7 +52,7 @@ public class CustomerAccountController {
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<CustomerAccountDto> create(
       @PathVariable @Parameter(description = "ID of the customer") Long customerId,
-      @RequestBody CreateCustomerAccountDto createAccountDto) {
+      @RequestBody @Valid CreateCustomerAccountDto createAccountDto) {
 
     createAccountDto.setCustomerId(customerId);
     CustomerAccountDto createdAccount = createCustomerAccountCommand.execute(createAccountDto);
@@ -68,7 +69,7 @@ public class CustomerAccountController {
   @PatchMapping("/{id}")
   public ResponseEntity<CustomerAccountDto> update(
       @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
-      @RequestBody UpdateCustomerAccountDto updateCustomerAccountDto) {
+      @RequestBody @Valid UpdateCustomerAccountDto updateCustomerAccountDto) {
 
     updateCustomerAccountDto.setId(id);
     CustomerAccountDto updatedAccount = updateCustomerAccountCommand.execute(updateCustomerAccountDto);
@@ -83,7 +84,7 @@ public class CustomerAccountController {
   @PatchMapping("/{id}/balance")
   public ResponseEntity<CustomerAccountDto> updateBalance(
       @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
-      @RequestBody UpdateCustomerAccountBalanceDto updateCustomerAccountDto) {
+      @RequestBody @Valid UpdateCustomerAccountBalanceDto updateCustomerAccountDto) {
 
     updateCustomerAccountDto.setId(id);
     CustomerAccountDto updatedAccount = updateCustomerAccountBalanceCommand.execute(updateCustomerAccountDto);

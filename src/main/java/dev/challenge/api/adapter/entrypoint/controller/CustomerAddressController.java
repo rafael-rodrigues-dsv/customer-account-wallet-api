@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,7 +50,7 @@ public class CustomerAddressController {
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<CustomerAddressDto> create(
       @PathVariable @Parameter(description = "ID of the customer") Long customerId,
-      @RequestBody CreateCustomerAddressDto createAddressDto) {
+      @RequestBody @Valid CreateCustomerAddressDto createAddressDto) {
 
     createAddressDto.setCustomerId(customerId);
     CustomerAddressDto createdAddress = createCustomerAddressCommand.execute(createAddressDto);
@@ -67,7 +68,7 @@ public class CustomerAddressController {
   public ResponseEntity<CustomerAddressDto> update(
       @PathVariable @Parameter(description = "ID of the customer address") Long id,
       @PathVariable @Parameter(description = "ID of the customer") Long customerId,
-      @RequestBody UpdateCustomerAddressDto updateAddressDto) {
+      @RequestBody @Valid UpdateCustomerAddressDto updateAddressDto) {
 
     updateAddressDto.setId(id);
     CustomerAddressDto updatedAddressDto = updateCustomerAddressCommand.execute(updateAddressDto);

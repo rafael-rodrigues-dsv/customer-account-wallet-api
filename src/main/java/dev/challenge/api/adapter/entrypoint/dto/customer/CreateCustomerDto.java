@@ -1,6 +1,7 @@
 package dev.challenge.api.adapter.entrypoint.dto.customer;
 
 import dev.challenge.api.domain.enumeration.CustomerTypeEnum;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

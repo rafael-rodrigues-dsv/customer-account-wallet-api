@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,10 +27,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping(value = "/api/v1/transfers")
+@RequestMapping(value = "/api/v1/transfers",  consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Transfers", description = "Operations related to Transfers")
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+@io.swagger.v3.oas.annotations.media.Schema(
+    name = "application/json",
+    implementation = TransferController.class
+)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TransferController {
 
