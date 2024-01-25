@@ -46,7 +46,7 @@ public class CustomerAccountController {
   private final ServiceCommand<UpdateCustomerAccountDto, CustomerAccountDto> updateCustomerAccountCommand;
   private final ServiceCommand<UpdateCustomerAccountBalanceDto, CustomerAccountDto> updateCustomerAccountBalanceCommand;
   private final ServiceCommand<UpdateCustomerAccountStatusDto, CustomerAccountDto> updateCustomerAccountStatusCommand;
-  private final ServiceCommand<FindByIdAndCustomerIdFilterDto, CustomerAccountDto> findByIdCustomerAccountCommand;
+  private final ServiceCommand<Long, CustomerAccountDto> findByIdCustomerAccountCommand;
   private final ServiceCommand<Long, List<CustomerAccountDto>> findAllCustomerAccountCommand;
 
   @Operation(summary = "Create an Account")
@@ -118,12 +118,7 @@ public class CustomerAccountController {
       @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
       @PathVariable @Parameter(description = "ID of the customer") Long customerId) {
 
-    FindByIdAndCustomerIdFilterDto filter = FindByIdAndCustomerIdFilterDto.builder()
-        .id(id)
-        .customerId(customerId)
-        .build();
-
-    CustomerAccountDto accountDto = findByIdCustomerAccountCommand.execute(filter);
+    CustomerAccountDto accountDto = findByIdCustomerAccountCommand.execute(id);
 
     return accountDto != null ? ResponseEntity.ok(accountDto)
         : ResponseEntity.notFound().build();
