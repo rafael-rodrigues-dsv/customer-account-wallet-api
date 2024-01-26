@@ -6,7 +6,7 @@ import dev.challenge.api.domain.CustomerService;
 import dev.challenge.api.domain.enumeration.CustomerAccountStatusEnum;
 import dev.challenge.api.domain.model.CustomerAccountModel;
 import dev.challenge.api.domain.model.CustomerModel;
-import dev.challenge.api.exception.BusinessException;
+import dev.challenge.api.exception.DomainRuleException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
   @Override
   public CustomerAccountModel add(Long customerId, CustomerAccountModel customerAccount) {
     if (hasAccountWithAccountNumber(customerAccount.getAccountNumber())) {
-      throw new BusinessException("An account with document number " + customerAccount.getAccountNumber() + " already exists.");
+      throw new DomainRuleException("An account with document number " + customerAccount.getAccountNumber() + " already exists.");
     }
 
     CustomerAccountModel newAccount = CustomerAccountModel.builder()
@@ -56,9 +56,9 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
 
       if (!accountStatus.equals(CustomerAccountStatusEnum.ACTIVE)) {
         if (accountStatus.equals(CustomerAccountStatusEnum.BLOCKED)) {
-          throw new BusinessException("Balance cannot be updated because Account is blocked with id " + id);
+          throw new DomainRuleException("Balance cannot be updated because Account is blocked with id " + id);
         } else {
-          throw new BusinessException("Balance cannot be updated because Account is disabled with id " + id);
+          throw new DomainRuleException("Balance cannot be updated because Account is disabled with id " + id);
         }
       }
 

@@ -3,7 +3,7 @@ package dev.challenge.api.domain.impl;
 import dev.challenge.api.adapter.database.repository.CustomerRepository;
 import dev.challenge.api.domain.CustomerService;
 import dev.challenge.api.domain.model.CustomerModel;
-import dev.challenge.api.exception.BusinessException;
+import dev.challenge.api.exception.DomainRuleException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class CustomerServiceImpl implements CustomerService {
   @Override
   public CustomerModel add(CustomerModel customer) {
     if (hasCustomerWithDocumentNumber(customer.getDocumentNumber())) {
-      throw new BusinessException("A customer with document number " + customer.getDocumentNumber() + " already exists.");
+      throw new DomainRuleException("A customer with document number " + customer.getDocumentNumber() + " already exists.");
     }
 
     customer.setPassword(new BCryptPasswordEncoder().encode(customer.getPassword()));

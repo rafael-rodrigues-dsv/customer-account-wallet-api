@@ -1,7 +1,6 @@
 package dev.challenge.api.adapter.entrypoint;
 
-import dev.challenge.api.exception.BusinessException;
-import dev.challenge.api.exception.SecurityException;
+import dev.challenge.api.exception.DomainRuleException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,14 +32,9 @@ public class EntryPointExceptionHandler {
     return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler(BusinessException.class)
-  public ResponseEntity<String> handleBusinessException(BusinessException e) {
+  @ExceptionHandler(DomainRuleException.class)
+  public ResponseEntity<String> handleBusinessException(DomainRuleException e) {
     return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-  }
-
-  @ExceptionHandler(SecurityException.class)
-  public ResponseEntity<String> handleSecurityException(SecurityException e) {
-    return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(EntityNotFoundException.class)

@@ -11,7 +11,7 @@ import dev.challenge.api.domain.enumeration.TransferStatusEnum;
 import dev.challenge.api.domain.model.CustomerAccountModel;
 import dev.challenge.api.domain.model.TransactionModel;
 import dev.challenge.api.domain.model.TransferModel;
-import dev.challenge.api.exception.BusinessException;
+import dev.challenge.api.exception.DomainRuleException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class TransferServiceImpl implements TransferService {
     CustomerAccountModel debitAccount = customerAccountService.findById(debitAccountId);
     CustomerAccountModel creditAccount = customerAccountService.findById(creditAccountId);
 
-    verifyAccount(debitAccount, creditAccount);
+    checkTransferEligibility(debitAccount, creditAccount, amount);
 
     customerAccountService.updateBalance(debitAccount.getId(), debitAccount.getBalance().subtract(amount));
     customerAccountService.updateBalance(creditAccount.getId(), creditAccount.getBalance().add(amount));
@@ -75,14 +75,14 @@ public class TransferServiceImpl implements TransferService {
     TransferModel transferToCancel = findById(id);
 
     if (!transferToCancel.getTransferStatus().equals(TransferStatusEnum.COMPLETED)) {
-      throw new BusinessException("Transfer already canceled or declined");
+      throw new DomainRuleException("Transfer already canceled or declined");
     }
 
     CustomerAccountModel debitAccount = customerAccountService.findById(transferToCancel.getDebitAccount().getId());
     CustomerAccountModel creditAccount = customerAccountService.findById(transferToCancel.getCreditAccount().getId());
     BigDecimal amount = transferToCancel.getAmount();
 
-    verifyAccount(debitAccount, creditAccount);
+    checkTransferEligibility(creditAccount, debitAccount, amount);
 
     customerAccountService.updateBalance(debitAccount.getId(), debitAccount.getBalance().add(amount));
     customerAccountService.updateBalance(creditAccount.getId(), creditAccount.getBalance().subtract(amount));
@@ -120,15 +120,20 @@ public class TransferServiceImpl implements TransferService {
         .orElseThrow(() -> new EntityNotFoundException("Transfer not found with id " + id));
   }
 
-  private void verifyAccount(CustomerAccountModel debitAccount, CustomerAccountModel creditAccount) {
+  private void checkTransferEligibility(CustomerAccountModel debitAccount, CustomerAccountModel creditAccount, BigDecimal amount) {
     if (!debitAccount.getAccountStatus().equals(CustomerAccountStatusEnum.ACTIVE)) {
-      throw new BusinessException("Transfer cannot be completed because the debit account with id "
+      throw new DomainRuleException("Transfer cannot be completed because the debit account with id "
           + debitAccount.getId() + " is not active");
     }
 
     if (!creditAccount.getAccountStatus().equals(CustomerAccountStatusEnum.ACTIVE)) {
-      throw new BusinessException("Transfer cannot be completed because the credit account with id "
+      throw new DomainRuleException("Transfer cannot be completed because the credit account with id "
           + creditAccount.getId() + " is not active");
+    }
+
+    if (debitAccount.getBalance().compareTo(amount) < 0) {
+      throw new DomainRuleException("Insufficient funds in the account with id "
+          + debitAccount.getId() + " for the operation.");
     }
   }
 }

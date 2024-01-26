@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,7 +47,7 @@ public class TransferController {
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<TransferDto> performTransfer(
       @RequestBody @Parameter(description = "Transfer data to be created")
-      PerformTransferDto performTransferDto) {
+      @Valid PerformTransferDto performTransferDto) {
 
     TransferDto createdTransfer = createTransferCommand.execute(performTransferDto);
 
