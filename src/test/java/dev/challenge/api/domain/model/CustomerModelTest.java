@@ -48,6 +48,12 @@ class CustomerModelTest {
     assertCustomerFields(customer);
   }
 
+  @Test
+  void testNoArgsConstructor() {
+    CustomerModel customer = new CustomerModel();
+    assertNotNull(customer);
+  }
+
   private void assertCustomerFields(CustomerModel customer) {
     assertEquals(1L, customer.getId());
     assertEquals(CustomerTypeEnum.NATURAL_PERSON, customer.getCustomerType());

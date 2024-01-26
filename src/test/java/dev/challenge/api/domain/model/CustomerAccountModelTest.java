@@ -45,6 +45,12 @@ class CustomerAccountModelTest {
     assertAccountFields(account);
   }
 
+  @Test
+  void testNoArgsConstructor() {
+    CustomerAccountModel account = new CustomerAccountModel();
+    assertNotNull(account);
+  }
+
   private void assertAccountFields(CustomerAccountModel account) {
     assertEquals(1L, account.getId());
     assertNotNull(account.getCustomer());

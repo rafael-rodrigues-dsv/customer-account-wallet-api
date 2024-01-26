@@ -45,6 +45,12 @@ class CustomerAddressModelTest {
     assertAddressFields(address);
   }
 
+  @Test
+  void testNoArgsConstructor() {
+    CustomerAddressModel address = new CustomerAddressModel();
+    assertNotNull(address);
+  }
+
   private void assertAddressFields(CustomerAddressModel address) {
     assertEquals(1L, address.getId());
     assertNotNull(address.getCustomer());
