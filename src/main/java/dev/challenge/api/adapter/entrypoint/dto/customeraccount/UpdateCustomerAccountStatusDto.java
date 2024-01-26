@@ -22,6 +22,10 @@ public class UpdateCustomerAccountStatusDto {
   @Setter(onMethod = @__(@JsonIgnore))
   private Long id;
 
+  @Getter(onMethod = @__(@JsonIgnore))
+  @Setter(onMethod = @__(@JsonIgnore))
+  private Long customerId;
+
   @NotNull(message = "Account Status is mandatory")
   CustomerAccountStatusEnum accountStatus;
 }

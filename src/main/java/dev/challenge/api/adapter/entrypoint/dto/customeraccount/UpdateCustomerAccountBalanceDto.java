@@ -21,6 +21,10 @@ public class UpdateCustomerAccountBalanceDto {
   @Setter(onMethod = @__(@JsonIgnore))
   private Long id;
 
+  @Getter(onMethod = @__(@JsonIgnore))
+  @Setter(onMethod = @__(@JsonIgnore))
+  private Long customerId;
+
   @NotNull(message = "Balance is mandatory")
   @Positive(message = "Balance must be greater than zero")
   private BigDecimal balance;

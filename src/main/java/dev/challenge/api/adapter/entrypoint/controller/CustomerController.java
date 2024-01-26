@@ -87,7 +87,7 @@ public class CustomerController {
   @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
   @Operation(summary = "Check a password for Customer by ID")
   @PostMapping("/{id}/check-password")
-  public ResponseEntity<Boolean> checkPassword(
+  public ResponseEntity<Void> checkPassword(
       @PathVariable @Parameter(description = "ID of the customer to be checked") Long id,
       @Valid @RequestBody CheckCustomerPasswordDto passwordToBeChecked) {
     passwordToBeChecked.setId(id);
@@ -96,7 +96,7 @@ public class CustomerController {
     Boolean isValidPassword = checkCustomerPasswordCommand.execute(passwordToBeChecked);
 
     return isValidPassword
-        ? ResponseEntity.ok(isValidPassword)
-        : ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        ? ResponseEntity.noContent().build()
+        : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
   }
 }

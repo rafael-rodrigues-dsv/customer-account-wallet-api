@@ -46,7 +46,7 @@ public class CustomerAccountController {
   private final ServiceCommand<UpdateCustomerAccountDto, CustomerAccountDto> updateCustomerAccountCommand;
   private final ServiceCommand<UpdateCustomerAccountBalanceDto, CustomerAccountDto> updateCustomerAccountBalanceCommand;
   private final ServiceCommand<UpdateCustomerAccountStatusDto, CustomerAccountDto> updateCustomerAccountStatusCommand;
-  private final ServiceCommand<Long, CustomerAccountDto> findByIdCustomerAccountCommand;
+  private final ServiceCommand<FindByIdAndCustomerIdFilterDto, CustomerAccountDto> findByIdCustomerAccountCommand;
   private final ServiceCommand<Long, List<CustomerAccountDto>> findAllCustomerAccountCommand;
 
   @Operation(summary = "Create an Account")
@@ -71,9 +71,11 @@ public class CustomerAccountController {
   @PatchMapping("/{id}")
   public ResponseEntity<CustomerAccountDto> update(
       @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
+      @PathVariable @Parameter(description = "ID of the Customer") Long customerId,
       @RequestBody @Valid UpdateCustomerAccountDto updateCustomerAccountDto) {
 
     updateCustomerAccountDto.setId(id);
+    updateCustomerAccountDto.setCustomerId(customerId);
     CustomerAccountDto updatedAccount = updateCustomerAccountCommand.execute(updateCustomerAccountDto);
 
     return updatedAccount != null ? ResponseEntity.ok(updatedAccount)
@@ -86,9 +88,11 @@ public class CustomerAccountController {
   @PatchMapping("/{id}/update-balance")
   public ResponseEntity<CustomerAccountDto> updateBalance(
       @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
+      @PathVariable @Parameter(description = "ID of the Customer") Long customerId,
       @RequestBody @Valid UpdateCustomerAccountBalanceDto updateCustomerAccountDto) {
 
     updateCustomerAccountDto.setId(id);
+    updateCustomerAccountDto.setCustomerId(customerId);
     CustomerAccountDto updatedAccount = updateCustomerAccountBalanceCommand.execute(updateCustomerAccountDto);
 
     return updatedAccount != null ? ResponseEntity.ok(updatedAccount)
@@ -101,9 +105,11 @@ public class CustomerAccountController {
   @PatchMapping("/{id}/update-account-status")
   public ResponseEntity<CustomerAccountDto> updateAccountStatus(
       @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
+      @PathVariable @Parameter(description = "ID of the Customer") Long customerId,
       @RequestBody @Valid UpdateCustomerAccountStatusDto updateCustomerAccountDto) {
 
     updateCustomerAccountDto.setId(id);
+    updateCustomerAccountDto.setCustomerId(customerId);
     CustomerAccountDto updatedAccount = updateCustomerAccountStatusCommand.execute(updateCustomerAccountDto);
 
     return updatedAccount != null ? ResponseEntity.ok(updatedAccount)
@@ -116,9 +122,14 @@ public class CustomerAccountController {
   @GetMapping("/{id}")
   public ResponseEntity<CustomerAccountDto> findByIdAndCustomerId(
       @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
-      @PathVariable @Parameter(description = "ID of the customer") Long customerId) {
+      @PathVariable @Parameter(description = "ID of the Customer") Long customerId) {
 
-    CustomerAccountDto accountDto = findByIdCustomerAccountCommand.execute(id);
+    FindByIdAndCustomerIdFilterDto filterDto = FindByIdAndCustomerIdFilterDto.builder()
+        .id(id)
+        .customerId(customerId)
+        .build();
+
+    CustomerAccountDto accountDto = findByIdCustomerAccountCommand.execute(filterDto);
 
     return accountDto != null ? ResponseEntity.ok(accountDto)
         : ResponseEntity.notFound().build();

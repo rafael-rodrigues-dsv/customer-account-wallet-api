@@ -20,6 +20,7 @@ public class UpdateCustomerAccountBalanceCommand implements ServiceCommand<Updat
   public CustomerAccountDto execute(UpdateCustomerAccountBalanceDto updateAccountDto) {
     return customMapper.map(service.updateBalance(
             updateAccountDto.getId(),
+            updateAccountDto.getCustomerId(),
             updateAccountDto.getBalance()),
         CustomerAccountDto.class);
   }

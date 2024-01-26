@@ -36,8 +36,13 @@ public class TransferServiceImpl implements TransferService {
 
     checkTransferEligibility(debitAccount, creditAccount, amount);
 
-    customerAccountService.updateBalance(debitAccount.getId(), debitAccount.getBalance().subtract(amount));
-    customerAccountService.updateBalance(creditAccount.getId(), creditAccount.getBalance().add(amount));
+    customerAccountService.updateBalance(debitAccount.getId(),
+        debitAccount.getCustomer().getId(),
+        debitAccount.getBalance().subtract(amount));
+
+    customerAccountService.updateBalance(creditAccount.getId(),
+        creditAccount.getCustomer().getId(),
+        creditAccount.getBalance().add(amount));
 
     TransferModel createdTransfer = transferRepository.save(TransferModel.builder()
         .debitAccount(debitAccount)
@@ -84,8 +89,13 @@ public class TransferServiceImpl implements TransferService {
 
     checkTransferEligibility(creditAccount, debitAccount, amount);
 
-    customerAccountService.updateBalance(debitAccount.getId(), debitAccount.getBalance().add(amount));
-    customerAccountService.updateBalance(creditAccount.getId(), creditAccount.getBalance().subtract(amount));
+    customerAccountService.updateBalance(debitAccount.getId(),
+        debitAccount.getCustomer().getId(),
+        debitAccount.getBalance().add(amount));
+
+    customerAccountService.updateBalance(creditAccount.getId(),
+        creditAccount.getCustomer().getId(),
+        creditAccount.getBalance().subtract(amount));
 
     transferToCancel.setTransferStatus(TransferStatusEnum.CANCELED);
 

@@ -23,6 +23,10 @@ public class UpdateCustomerAddressDto {
   @Setter(onMethod = @__(@JsonIgnore))
   private Long id;
 
+  @Getter(onMethod = @__(@JsonIgnore))
+  @Setter(onMethod = @__(@JsonIgnore))
+  private Long customerId;
+  
   @NotBlank(message = "Street is mandatory")
   @Size(max = 200, message = "Street must have at most 200 characters")
   private String street;

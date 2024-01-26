@@ -4,6 +4,7 @@ import dev.challenge.api.adapter.entrypoint.command.ServiceCommand;
 import dev.challenge.api.adapter.entrypoint.dto.customeraddress.CreateCustomerAddressDto;
 import dev.challenge.api.adapter.entrypoint.dto.customeraddress.CustomerAddressDto;
 import dev.challenge.api.adapter.entrypoint.dto.customeraddress.UpdateCustomerAddressDto;
+import dev.challenge.api.adapter.entrypoint.dto.filter.FindByIdAndCustomerIdFilterDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -41,7 +42,7 @@ public class CustomerAddressController {
 
   private final ServiceCommand<CreateCustomerAddressDto, CustomerAddressDto> createCustomerAddressCommand;
   private final ServiceCommand<UpdateCustomerAddressDto, CustomerAddressDto> updateCustomerAddressCommand;
-  private final ServiceCommand<Long, CustomerAddressDto> findByIdCustomerAddressCommand;
+  private final ServiceCommand<FindByIdAndCustomerIdFilterDto, CustomerAddressDto> findByIdCustomerAddressCommand;
   private final ServiceCommand<Long, List<CustomerAddressDto>> findAllCustomerAddressCommand;
 
   @Operation(summary = "Create a Customer Address")
@@ -70,6 +71,7 @@ public class CustomerAddressController {
       @RequestBody @Valid UpdateCustomerAddressDto updateAddressDto) {
 
     updateAddressDto.setId(id);
+    updateAddressDto.setCustomerId(customerId);
     CustomerAddressDto updatedAddressDto = updateCustomerAddressCommand.execute(updateAddressDto);
 
     return updatedAddressDto != null ? ResponseEntity.ok(updatedAddressDto)
@@ -84,7 +86,12 @@ public class CustomerAddressController {
       @PathVariable @Parameter(description = "ID of the customer address") Long id,
       @PathVariable @Parameter(description = "ID of the customer") Long customerId) {
 
-    CustomerAddressDto addressDto = findByIdCustomerAddressCommand.execute(id);
+    FindByIdAndCustomerIdFilterDto filterDto = FindByIdAndCustomerIdFilterDto.builder()
+        .id(id)
+        .customerId(customerId)
+        .build();
+
+    CustomerAddressDto addressDto = findByIdCustomerAddressCommand.execute(filterDto);
 
     return addressDto != null ? ResponseEntity.ok(addressDto)
         : ResponseEntity.notFound().build();
@@ -95,7 +102,6 @@ public class CustomerAddressController {
   @Operation(summary = "Get All Customer Addresses by Customer Id")
   @GetMapping
   public ResponseEntity<List<CustomerAddressDto>> findAllByCustomerId(
-      @PathVariable @Parameter(description = "ID of the customer address") Long id,
       @PathVariable @Parameter(description = "ID of the customer") Long customerId) {
 
     List<CustomerAddressDto> customerAddress = findAllCustomerAddressCommand.execute(customerId);

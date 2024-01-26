@@ -42,83 +42,82 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
   }
 
   @Override
-  public CustomerAccountModel update(Long id, CustomerAccountModel customerAccount) {
-    CustomerAccountModel existingAccount = findById(id);
-    existingAccount.setAgency(customerAccount.getAgency());
-    existingAccount.setAccountNumber(customerAccount.getAccountNumber());
-    return customerAccountRepository.save(existingAccount);
+  public CustomerAccountModel update(Long id, Long customerId, CustomerAccountModel customerAccount) {
+    CustomerAccountModel currentAccount = findByIdAndVerifyCustomerId(id, customerId);
+    currentAccount.setAgency(customerAccount.getAgency());
+    currentAccount.setAccountNumber(customerAccount.getAccountNumber());
+    return customerAccountRepository.save(currentAccount);
   }
 
   @Override
-  public CustomerAccountModel updateBalance(Long id, BigDecimal balance) {
-    return customerAccountRepository.findById(id).map(existingAccount -> {
-      CustomerAccountStatusEnum accountStatus = existingAccount.getAccountStatus();
+  public CustomerAccountModel updateBalance(Long id, Long customerId, BigDecimal balance) {
+    CustomerAccountModel currentAccount = findByIdAndVerifyCustomerId(id, customerId);
+    CustomerAccountStatusEnum accountStatus = currentAccount.getAccountStatus();
 
-      if (!accountStatus.equals(CustomerAccountStatusEnum.ACTIVE)) {
-        if (accountStatus.equals(CustomerAccountStatusEnum.BLOCKED)) {
-          throw new DomainRuleException("Balance cannot be updated because Account is blocked with id " + id);
-        } else {
-          throw new DomainRuleException("Balance cannot be updated because Account is disabled with id " + id);
-        }
-      }
+    if (!accountStatus.equals(CustomerAccountStatusEnum.ACTIVE)) {
+      String errorMessage = accountStatus.equals(CustomerAccountStatusEnum.BLOCKED) ?
+          "Balance cannot be updated because Account is blocked with id " + id :
+          "Balance cannot be updated because Account is disabled with id " + id;
+      throw new DomainRuleException(errorMessage);
+    }
 
-      existingAccount.setBalance(balance);
-      return customerAccountRepository.save(existingAccount);
-    }).orElseThrow(() -> new EntityNotFoundException("Account not found with id " + id));
+    currentAccount.setBalance(balance);
+    return customerAccountRepository.save(currentAccount);
   }
 
   @Override
-  public CustomerAccountModel updateAccountStatus(Long id, CustomerAccountStatusEnum accountStatus) {
-    return customerAccountRepository.findById(id).map(existingAccount -> {
-      existingAccount.setAccountStatus(accountStatus);
-      return customerAccountRepository.save(existingAccount);
-    }).orElseThrow(() -> new EntityNotFoundException("Account not found with id " + id));
+  public CustomerAccountModel updateAccountStatus(Long id, Long customerId, CustomerAccountStatusEnum accountStatus) {
+    CustomerAccountModel currentAccount = findByIdAndVerifyCustomerId(id, customerId);
+    currentAccount.setAccountStatus(accountStatus);
+    return customerAccountRepository.save(currentAccount);
   }
 
   @Override
   public CustomerAccountModel findById(Long id) {
     return customerAccountRepository.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("Customer Account not found with id " + id));
+        .orElseThrow(() -> new EntityNotFoundException("Account not found with ID " + id));
   }
 
   @Override
-  public CustomerAccountModel findByIdAndCustomerId(Long id, Long customerId) {
-    Example<CustomerAccountModel> filter = Example.of(CustomerAccountModel.builder()
-        .id(id)
-        .customer(CustomerModel.builder().id(customerId).build())
-        .build());
+  public CustomerAccountModel findByIdAndVerifyCustomerId(Long id, Long customerId) {
+    CustomerAccountModel currentAccount = findById(id);
 
-    return customerAccountRepository.findAll(filter)
-        .stream()
-        .findFirst()
-        .orElseThrow(() -> new EntityNotFoundException("Account not found with CustomerId " + customerId + " and CustomerBankAccountId " + id));
+    if (!currentAccount.getCustomer().getId().equals(customerId)) {
+      throw new DomainRuleException("Account with ID " + currentAccount.getId() +
+          " does not belong to customer with ID " + customerId);
+    }
+
+    return currentAccount;
   }
 
   @Override
   public List<CustomerAccountModel> findAllByCustomerId(Long customerId) {
-    Example<CustomerAccountModel> filter = Example.of(CustomerAccountModel.builder()
-        .customer(CustomerModel.builder().id(customerId).build())
-        .build());
-
-    return customerAccountRepository.findAll(filter)
+    return customerAccountRepository.findAll(
+            Example.of(
+                CustomerAccountModel.builder()
+                    .customer(CustomerModel.builder().id(customerId).build())
+                    .build()
+            ))
         .stream()
         .toList();
   }
 
   private Boolean hasDefaultByCustomerId(Long customerId) {
-    Example<CustomerAccountModel> filter = Example.of(CustomerAccountModel.builder()
-        .customer(CustomerModel.builder().id(customerId).build())
-        .isDefault(Boolean.TRUE)
-        .build());
-
-    return customerAccountRepository.exists(filter);
+    return customerAccountRepository.exists(
+        Example.of(
+            CustomerAccountModel.builder()
+                .customer(CustomerModel.builder().id(customerId).build())
+                .isDefault(Boolean.TRUE)
+                .build()
+        ));
   }
 
   private Boolean hasAccountWithAccountNumber(String document) {
-    Example<CustomerAccountModel> filter = Example.of(CustomerAccountModel.builder()
-        .accountNumber(document)
-        .build());
-
-    return customerAccountRepository.exists(filter);
+    return customerAccountRepository.exists(
+        Example.of(
+            CustomerAccountModel.builder()
+                .accountNumber(document)
+                .build()
+        ));
   }
 }

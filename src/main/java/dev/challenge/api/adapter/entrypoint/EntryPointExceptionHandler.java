@@ -33,8 +33,9 @@ public class EntryPointExceptionHandler {
   }
 
   @ExceptionHandler(DomainRuleException.class)
-  public ResponseEntity<String> handleBusinessException(DomainRuleException e) {
-    return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+  public ResponseEntity<Map<String, String>> handleBusinessException(DomainRuleException e) {
+    Map<String, String> error = Map.of("Message", e.getMessage());
+    return ResponseEntity.badRequest().body(error);
   }
 
   @ExceptionHandler(EntityNotFoundException.class)

@@ -22,6 +22,10 @@ public class UpdateCustomerAccountDto {
   @Setter(onMethod = @__(@JsonIgnore))
   private Long id;
 
+  @Getter(onMethod = @__(@JsonIgnore))
+  @Setter(onMethod = @__(@JsonIgnore))
+  private Long customerId;
+
   @NotNull(message = "Agency is mandatory")
   @NotBlank(message = "Agency cannot be blank")
   @Size(max = 6, message = "Agency must have at most 6 characters")
