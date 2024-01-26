@@ -2,8 +2,10 @@ package dev.challenge.api.adapter.entrypoint.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Generated;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+@Generated
 public class ApiCustomerInterceptor implements HandlerInterceptor {
 
   @Override

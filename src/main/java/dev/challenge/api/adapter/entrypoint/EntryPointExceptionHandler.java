@@ -2,6 +2,7 @@ package dev.challenge.api.adapter.entrypoint;
 
 import dev.challenge.api.exception.DomainRuleException;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.Generated;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Generated
 @ControllerAdvice
 public class EntryPointExceptionHandler {
 
