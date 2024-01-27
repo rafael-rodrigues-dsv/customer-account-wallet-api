@@ -65,13 +65,9 @@ public class CustomerAddressController {
       @PathVariable @Parameter(description = "ID of the customer address") Long id,
       @PathVariable @Parameter(description = "ID of the customer") Long customerId,
       @RequestBody @Valid UpdateCustomerAddressDto updateAddressDto) {
-
     updateAddressDto.setId(id);
     updateAddressDto.setCustomerId(customerId);
-    CustomerAddressDto updatedAddressDto = updateCustomerAddressCommand.execute(updateAddressDto);
-
-    return updatedAddressDto != null ? ResponseEntity.ok(updatedAddressDto)
-        : ResponseEntity.notFound().build();
+    return ResponseEntity.ok(updateCustomerAddressCommand.execute(updateAddressDto));
   }
 
   @ApiResponse(responseCode = "200", description = "OK", content = @Content)
@@ -87,10 +83,7 @@ public class CustomerAddressController {
         .customerId(customerId)
         .build();
 
-    CustomerAddressDto addressDto = findByIdCustomerAddressCommand.execute(filterDto);
-
-    return addressDto != null ? ResponseEntity.ok(addressDto)
-        : ResponseEntity.notFound().build();
+    return ResponseEntity.ok(findByIdCustomerAddressCommand.execute(filterDto));
   }
 
   @ApiResponse(responseCode = "200", description = "OK", content = @Content)

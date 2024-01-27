@@ -60,12 +60,8 @@ public class CustomerController {
   public ResponseEntity<CustomerDto> update(
       @PathVariable @Parameter(description = "ID of the customer to be updated") Long id,
       @Valid @RequestBody UpdateCustomerDto updateCustomerDto) {
-
     updateCustomerDto.setId(id);
-    CustomerDto updatedCustomer = updateCustomerCommand.execute(updateCustomerDto);
-
-    return updatedCustomer != null ? ResponseEntity.ok(updatedCustomer)
-        : ResponseEntity.notFound().build();
+    return ResponseEntity.ok(updateCustomerCommand.execute(updateCustomerDto));
   }
 
   @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
@@ -73,11 +69,7 @@ public class CustomerController {
   @GetMapping("/{id}")
   public ResponseEntity<CustomerDto> getById(
       @PathVariable @Parameter(description = "ID of the customer to be retrieved") Long id) {
-
-    CustomerDto customer = findByIdCommand.execute(id);
-
-    return customer != null ? ResponseEntity.ok(customer)
-        : ResponseEntity.notFound().build();
+    return ResponseEntity.ok(findByIdCommand.execute(id));
   }
 
   @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)

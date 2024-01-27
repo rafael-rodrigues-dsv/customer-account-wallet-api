@@ -35,10 +35,6 @@ import java.util.List;
 @Tag(name = "Customer Accounts", description = "Operations related to Customer Accounts")
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
-@io.swagger.v3.oas.annotations.media.Schema(
-    name = "application/json",
-    implementation = CustomerAccountController.class
-)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CustomerAccountController {
 
@@ -107,13 +103,9 @@ public class CustomerAccountController {
       @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
       @PathVariable @Parameter(description = "ID of the Customer") Long customerId,
       @RequestBody @Valid UpdateCustomerAccountStatusDto updateCustomerAccountDto) {
-
     updateCustomerAccountDto.setId(id);
     updateCustomerAccountDto.setCustomerId(customerId);
-    CustomerAccountDto updatedAccount = updateCustomerAccountStatusCommand.execute(updateCustomerAccountDto);
-
-    return updatedAccount != null ? ResponseEntity.ok(updatedAccount)
-        : ResponseEntity.notFound().build();
+    return ResponseEntity.ok(updateCustomerAccountStatusCommand.execute(updateCustomerAccountDto));
   }
 
   @ApiResponse(responseCode = "200", description = "OK", content = @Content)
@@ -129,10 +121,7 @@ public class CustomerAccountController {
         .customerId(customerId)
         .build();
 
-    CustomerAccountDto accountDto = findByIdCustomerAccountCommand.execute(filterDto);
-
-    return accountDto != null ? ResponseEntity.ok(accountDto)
-        : ResponseEntity.notFound().build();
+    return ResponseEntity.ok(findByIdCustomerAccountCommand.execute(filterDto));
   }
 
   @ApiResponse(responseCode = "200", description = "OK", content = @Content)

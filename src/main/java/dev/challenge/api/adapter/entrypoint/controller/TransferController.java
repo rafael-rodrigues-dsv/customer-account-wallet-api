@@ -63,10 +63,7 @@ public class TransferController {
         .id(id)
         .build();
 
-    TransferDto cancelledTransfer = cancelTransferCommand.execute(cancelTransferDto);
-
-    return cancelledTransfer != null ? ResponseEntity.ok(cancelledTransfer)
-        : ResponseEntity.notFound().build();
+    return ResponseEntity.ok(cancelTransferCommand.execute(cancelTransferDto));
   }
 
   @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
@@ -74,10 +71,6 @@ public class TransferController {
   @GetMapping("/{id}")
   public ResponseEntity<TransferDto> findById(
       @PathVariable @Parameter(description = "ID of the Transfer") Long id) {
-
-    TransferDto transfer = findByIdCommand.execute(id);
-
-    return transfer != null ? ResponseEntity.ok(transfer)
-        : ResponseEntity.notFound().build();
+    return ResponseEntity.ok(findByIdCommand.execute(id));
   }
 }
