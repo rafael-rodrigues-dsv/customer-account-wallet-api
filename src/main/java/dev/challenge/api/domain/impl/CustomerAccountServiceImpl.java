@@ -43,10 +43,15 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
 
   @Override
   public CustomerAccountModel update(Long id, Long customerId, CustomerAccountModel customerAccount) {
-    if (hasAccountWithAccountNumber(customerAccount.getAccountNumber())) {
-      throw new DomainRuleException("An account with number " + customerAccount.getAccountNumber() + " already exists.");
-    }
+
     CustomerAccountModel currentAccount = findByIdAndVerifyCustomerId(id, customerId);
+
+    if (!currentAccount.getAccountNumber().equals(customerAccount.getAccountNumber())) {
+      if (hasAccountWithAccountNumber(customerAccount.getAccountNumber())) {
+        throw new DomainRuleException("An account with number " + customerAccount.getAccountNumber() + " already exists.");
+      }
+    }
+
     currentAccount.setAgency(customerAccount.getAgency());
     currentAccount.setAccountNumber(customerAccount.getAccountNumber());
     return customerAccountRepository.save(currentAccount);

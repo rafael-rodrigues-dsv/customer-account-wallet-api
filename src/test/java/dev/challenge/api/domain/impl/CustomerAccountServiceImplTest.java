@@ -98,7 +98,6 @@ class CustomerAccountServiceImplTest {
     Long customerId = customerAccount.getCustomer().getId();
 
     when(customerAccountRepository.findById(accountId)).thenReturn(Optional.of(customerAccount));
-    when(customerAccountRepository.exists(any())).thenReturn(false);
     when(customerAccountRepository.save(any())).thenReturn(customerAccount);
 
     // Act
@@ -114,11 +113,16 @@ class CustomerAccountServiceImplTest {
   @Test
   void testUpdate_Failure_DuplicateAccountNumber() {
     // Arrange
-    CustomerAccountModel customerAccount = UpdateCustomerAccount();
     Long id = 1L;
     Long customerId = 1L;
+    CustomerAccountModel customerAccount = UpdateCustomerAccount();
+    CustomerAccountModel customerAccountToUpdate = CustomerAccountModel.builder()
+        .id(1L)
+        .customer(CustomerModel.builder().id(1L).build())
+        .accountNumber("123")
+        .build();
 
-    // Use lenient() to make the stubbing lenient
+    when(customerAccountRepository.findById(id)).thenReturn(Optional.of(customerAccountToUpdate));
     when(customerAccountRepository.exists(any())).thenReturn(true);
 
     // Act & Assert
