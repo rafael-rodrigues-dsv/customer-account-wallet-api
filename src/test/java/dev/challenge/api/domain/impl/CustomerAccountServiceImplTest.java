@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -40,7 +41,7 @@ class CustomerAccountServiceImplTest {
   @InjectMocks
   private CustomerAccountServiceImpl customerAccountService;
 
-  private CustomerAccountModel createCustomerAccount() {
+  private CustomerAccountModel UpdateCustomerAccount() {
     return CustomerAccountModel.builder()
         .id(1L)
         .customer(CustomerModel.builder().id(1L).build())
@@ -55,7 +56,7 @@ class CustomerAccountServiceImplTest {
   @Test
   void testAdd_Success() {
     // Arrange
-    CustomerAccountModel customerAccount = createCustomerAccount();
+    CustomerAccountModel customerAccount = UpdateCustomerAccount();
     Long customerId = 1L;
 
     when(customerService.findById(customerId)).thenReturn(CustomerModel.builder().id(customerId).build());
@@ -78,7 +79,7 @@ class CustomerAccountServiceImplTest {
   @Test
   void testAdd_Failure_DuplicateAccountNumber() {
     // Arrange
-    CustomerAccountModel customerAccount = createCustomerAccount();
+    CustomerAccountModel customerAccount = UpdateCustomerAccount();
     Long customerId = 1L;
 
     // Use lenient() to make the stubbing lenient
@@ -92,11 +93,12 @@ class CustomerAccountServiceImplTest {
   @Test
   void testUpdate_Success() {
     // Arrange
-    CustomerAccountModel customerAccount = createCustomerAccount();
+    CustomerAccountModel customerAccount = UpdateCustomerAccount();
     Long accountId = customerAccount.getId();
     Long customerId = customerAccount.getCustomer().getId();
 
     when(customerAccountRepository.findById(accountId)).thenReturn(Optional.of(customerAccount));
+    when(customerAccountRepository.exists(any())).thenReturn(false);
     when(customerAccountRepository.save(any())).thenReturn(customerAccount);
 
     // Act
@@ -110,9 +112,24 @@ class CustomerAccountServiceImplTest {
   }
 
   @Test
+  void testUpdate_Failure_DuplicateAccountNumber() {
+    // Arrange
+    CustomerAccountModel customerAccount = UpdateCustomerAccount();
+    Long id = 1L;
+    Long customerId = 1L;
+
+    // Use lenient() to make the stubbing lenient
+    when(customerAccountRepository.exists(any())).thenReturn(true);
+
+    // Act & Assert
+    assertThrows(DomainRuleException.class, () -> customerAccountService.update(id, customerId, customerAccount));
+    verify(customerAccountRepository, never()).save(any());
+  }
+
+  @Test
   void testUpdate_Failure_AccountNotFound() {
     // Arrange
-    CustomerAccountModel customerAccount = createCustomerAccount();
+    CustomerAccountModel customerAccount = UpdateCustomerAccount();
     Long accountId = customerAccount.getId();
     Long customerId = customerAccount.getCustomer().getId();
 
@@ -126,7 +143,7 @@ class CustomerAccountServiceImplTest {
   @Test
   void testUpdateBalance_Success() {
     // Arrange
-    CustomerAccountModel customerAccount = createCustomerAccount();
+    CustomerAccountModel customerAccount = UpdateCustomerAccount();
     Long accountId = customerAccount.getId();
     Long customerId = customerAccount.getCustomer().getId();
     BigDecimal newBalance = BigDecimal.TEN;
@@ -160,7 +177,7 @@ class CustomerAccountServiceImplTest {
   @Test
   void testUpdateBalance_Failure_AccountBlocked() {
     // Arrange
-    CustomerAccountModel customerAccount = createCustomerAccount();
+    CustomerAccountModel customerAccount = UpdateCustomerAccount();
     customerAccount.setAccountStatus(CustomerAccountStatusEnum.BLOCKED);
     Long accountId = customerAccount.getId();
     Long customerId = customerAccount.getCustomer().getId();
@@ -176,7 +193,7 @@ class CustomerAccountServiceImplTest {
   @Test
   void testUpdateBalance_Failure_AccountDisabled() {
     // Arrange
-    CustomerAccountModel customerAccount = createCustomerAccount();
+    CustomerAccountModel customerAccount = UpdateCustomerAccount();
     customerAccount.setAccountStatus(CustomerAccountStatusEnum.DISABLED);
     Long accountId = customerAccount.getId();
     Long customerId = customerAccount.getCustomer().getId();
@@ -192,7 +209,7 @@ class CustomerAccountServiceImplTest {
   @Test
   void testUpdateAccountStatus_Success() {
     // Arrange
-    CustomerAccountModel customerAccount = createCustomerAccount();
+    CustomerAccountModel customerAccount = UpdateCustomerAccount();
     Long accountId = customerAccount.getId();
     Long customerId = customerAccount.getCustomer().getId();
     CustomerAccountStatusEnum newStatus = CustomerAccountStatusEnum.BLOCKED;
@@ -226,7 +243,7 @@ class CustomerAccountServiceImplTest {
   @Test
   void testFindById_Success() {
     // Arrange
-    CustomerAccountModel customerAccount = createCustomerAccount();
+    CustomerAccountModel customerAccount = UpdateCustomerAccount();
     Long accountId = customerAccount.getId();
 
     when(customerAccountRepository.findById(accountId)).thenReturn(Optional.of(customerAccount));
@@ -255,7 +272,7 @@ class CustomerAccountServiceImplTest {
   @Test
   void testFindByIdAndVerifyCustomerId_Success() {
     // Arrange
-    CustomerAccountModel customerAccount = createCustomerAccount();
+    CustomerAccountModel customerAccount = UpdateCustomerAccount();
     Long accountId = customerAccount.getId();
     Long customerId = customerAccount.getCustomer().getId();
 
@@ -286,7 +303,7 @@ class CustomerAccountServiceImplTest {
   @Test
   void testFindByIdAndVerifyCustomerId_Failure_WrongCustomerId() {
     // Arrange
-    CustomerAccountModel customerAccount = createCustomerAccount();
+    CustomerAccountModel customerAccount = UpdateCustomerAccount();
     Long accountId = customerAccount.getId();
     Long correctCustomerId = customerAccount.getCustomer().getId();
     Long wrongCustomerId = 99L;
@@ -302,7 +319,7 @@ class CustomerAccountServiceImplTest {
   void testFindAllByCustomerId_Success() {
     // Arrange
     Long customerId = 1L;
-    CustomerAccountModel customerAccount = createCustomerAccount();
+    CustomerAccountModel customerAccount = UpdateCustomerAccount();
     List<CustomerAccountModel> accounts = Collections.singletonList(customerAccount);
 
     Example<CustomerAccountModel> example = Example.of(

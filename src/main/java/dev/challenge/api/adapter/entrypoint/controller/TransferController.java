@@ -27,14 +27,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping(value = "/api/v1/transfers")
+@RequestMapping(value = "/api/v1/transfers", produces = "application/json")
 @Tag(name = "Transfers", description = "Operations related to Transfers")
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
-@io.swagger.v3.oas.annotations.media.Schema(
-    name = "application/json",
-    implementation = TransferController.class
-)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TransferController {
 

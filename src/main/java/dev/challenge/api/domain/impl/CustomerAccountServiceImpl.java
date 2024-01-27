@@ -26,7 +26,7 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
   @Override
   public CustomerAccountModel add(Long customerId, CustomerAccountModel customerAccount) {
     if (hasAccountWithAccountNumber(customerAccount.getAccountNumber())) {
-      throw new DomainRuleException("An account with document number " + customerAccount.getAccountNumber() + " already exists.");
+      throw new DomainRuleException("An account with number " + customerAccount.getAccountNumber() + " already exists.");
     }
 
     CustomerAccountModel newAccount = CustomerAccountModel.builder()
@@ -43,6 +43,9 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
 
   @Override
   public CustomerAccountModel update(Long id, Long customerId, CustomerAccountModel customerAccount) {
+    if (hasAccountWithAccountNumber(customerAccount.getAccountNumber())) {
+      throw new DomainRuleException("An account with number " + customerAccount.getAccountNumber() + " already exists.");
+    }
     CustomerAccountModel currentAccount = findByIdAndVerifyCustomerId(id, customerId);
     currentAccount.setAgency(customerAccount.getAgency());
     currentAccount.setAccountNumber(customerAccount.getAccountNumber());

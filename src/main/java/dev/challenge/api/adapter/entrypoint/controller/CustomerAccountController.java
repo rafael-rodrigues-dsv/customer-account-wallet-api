@@ -31,7 +31,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1/customers/{customerId}/customer-accounts")
+@RequestMapping(value = "/api/v1/customers/{customerId}/customer-accounts", produces = "application/json")
 @Tag(name = "Customer Accounts", description = "Operations related to Customer Accounts")
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)

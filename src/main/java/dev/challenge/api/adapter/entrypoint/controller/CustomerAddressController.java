@@ -29,14 +29,10 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1/customers/{customerId}/customer-addresses")
+@RequestMapping(value = "/api/v1/customers/{customerId}/customer-addresses", produces = "application/json")
 @Tag(name = "Customer Addresses", description = "Operations related to Customer Addresses")
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
-@io.swagger.v3.oas.annotations.media.Schema(
-    name = "application/json",
-    implementation = CustomerAddressController.class
-)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CustomerAddressController {
 
