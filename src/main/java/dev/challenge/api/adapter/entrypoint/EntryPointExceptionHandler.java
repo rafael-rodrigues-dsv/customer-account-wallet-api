@@ -1,5 +1,6 @@
 package dev.challenge.api.adapter.entrypoint;
 
+import dev.challenge.api.adapter.entrypoint.dto.ErrorResponseDto;
 import dev.challenge.api.exception.DomainRuleException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Generated;
@@ -8,45 +9,41 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-@Generated
 @ControllerAdvice
 public class EntryPointExceptionHandler {
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ResponseEntity<List<Map<String, String>>> handleValidationException(MethodArgumentNotValidException e) {
-    List<Map<String, String>> errors = e.getBindingResult().getFieldErrors().stream()
-        .map(fieldError -> {
-          Map<String, String> error = new HashMap<>();
-          error.put("Field", fieldError.getField());
-          error.put("Message", fieldError.getDefaultMessage());
-          return error;
-        })
+  public ResponseEntity<ErrorResponseDto> handleValidationException(MethodArgumentNotValidException e) {
+    List<String> errors = e.getBindingResult().getFieldErrors().stream()
+        .map(fieldError -> fieldError.getDefaultMessage())
         .collect(Collectors.toList());
 
-    return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    return showMessageErrors(errors, HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(DomainRuleException.class)
-  public ResponseEntity<Map<String, String>> handleBusinessException(DomainRuleException e) {
-    Map<String, String> error = Map.of("Message", e.getMessage());
-    return ResponseEntity.badRequest().body(error);
+  public ResponseEntity<ErrorResponseDto> handleBusinessException(DomainRuleException e) {
+    return showMessageErrors(List.of(e.getMessage()), HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(EntityNotFoundException.class)
-  public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException e) {
-    return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+  public ResponseEntity<ErrorResponseDto> handleEntityNotFoundException(EntityNotFoundException e) {
+    return showMessageErrors(List.of(e.getMessage()), HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<String> handleException(Exception e) {
-    return new ResponseEntity<>("Erro ao processar a solicitação: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+  public ResponseEntity<ErrorResponseDto> handleException(Exception e) {
+    return showMessageErrors(List.of("Erro ao processar a solicitação: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  private ResponseEntity<ErrorResponseDto> showMessageErrors(List<String> errorList, HttpStatus statusCode) {
+    ErrorResponseDto errorResponseDto = ErrorResponseDto.builder()
+        .errors(errorList)
+        .build();
+    return new ResponseEntity<>(errorResponseDto, statusCode);
   }
 }
