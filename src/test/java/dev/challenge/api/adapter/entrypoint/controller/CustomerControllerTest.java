@@ -135,4 +135,22 @@ class CustomerControllerTest {
             .content(Objects.requireNonNull(objectMapper.writeValueAsString(checkCustomerPasswordDto))))
         .andExpect(status().isNoContent());
   }
+
+  @Test
+  void testCheckCustomerPasswordInvalid() throws Exception {
+    // Arrange
+    Long customerId = 1L;
+    CheckCustomerPasswordDto checkCustomerPasswordDto = new CheckCustomerPasswordDto();
+    checkCustomerPasswordDto.setId(customerId);
+    checkCustomerPasswordDto.setPassword("InvalidPassword123!");
+
+    when(checkCustomerPasswordCommand.execute(any())).thenReturn(false);
+
+    // Act & Assert
+    mockMvc.perform(post("/api/v1/customers/1/check-password")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(Objects.requireNonNull(objectMapper.writeValueAsString(checkCustomerPasswordDto))))
+        .andExpect(status().isUnauthorized());
+  }
+
 }

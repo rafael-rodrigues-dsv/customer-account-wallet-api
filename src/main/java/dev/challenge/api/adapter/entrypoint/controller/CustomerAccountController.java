@@ -69,13 +69,9 @@ public class CustomerAccountController {
       @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
       @PathVariable @Parameter(description = "ID of the Customer") Long customerId,
       @RequestBody @Valid UpdateCustomerAccountDto updateCustomerAccountDto) {
-
     updateCustomerAccountDto.setId(id);
     updateCustomerAccountDto.setCustomerId(customerId);
-    CustomerAccountDto updatedAccount = updateCustomerAccountCommand.execute(updateCustomerAccountDto);
-
-    return updatedAccount != null ? ResponseEntity.ok(updatedAccount)
-        : ResponseEntity.notFound().build();
+    return ResponseEntity.ok(updateCustomerAccountCommand.execute(updateCustomerAccountDto));
   }
 
   @ApiResponse(responseCode = "200", description = "OK", content = @Content)
@@ -86,13 +82,9 @@ public class CustomerAccountController {
       @PathVariable @Parameter(description = "ID of the Customer Account") Long id,
       @PathVariable @Parameter(description = "ID of the Customer") Long customerId,
       @RequestBody @Valid UpdateCustomerAccountBalanceDto updateCustomerAccountDto) {
-
     updateCustomerAccountDto.setId(id);
     updateCustomerAccountDto.setCustomerId(customerId);
-    CustomerAccountDto updatedAccount = updateCustomerAccountBalanceCommand.execute(updateCustomerAccountDto);
-
-    return updatedAccount != null ? ResponseEntity.ok(updatedAccount)
-        : ResponseEntity.notFound().build();
+    return ResponseEntity.ok(updateCustomerAccountBalanceCommand.execute(updateCustomerAccountDto));
   }
 
   @ApiResponse(responseCode = "200", description = "OK", content = @Content)
