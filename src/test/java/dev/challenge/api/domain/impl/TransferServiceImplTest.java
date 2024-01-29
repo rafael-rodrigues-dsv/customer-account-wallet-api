@@ -1,9 +1,11 @@
 package dev.challenge.api.domain.impl;
 
 import dev.challenge.api.adapter.database.repository.TransferRepository;
+import dev.challenge.api.adapter.notification.NotificationService;
 import dev.challenge.api.domain.CustomerAccountService;
 import dev.challenge.api.domain.TransactionService;
 import dev.challenge.api.domain.enumeration.CustomerAccountStatusEnum;
+import dev.challenge.api.domain.enumeration.TransactionReasonEnum;
 import dev.challenge.api.domain.enumeration.TransferStatusEnum;
 import dev.challenge.api.domain.model.CustomerAccountModel;
 import dev.challenge.api.domain.model.CustomerModel;
@@ -40,6 +42,9 @@ class TransferServiceImplTest {
   @Mock
   private TransactionService transactionService;
 
+  @Mock
+  private NotificationService notificationService;
+
   @InjectMocks
   private TransferServiceImpl transferService;
 
@@ -53,19 +58,35 @@ class TransferServiceImplTest {
         .id(debitAccountId)
         .balance(BigDecimal.valueOf(1000))
         .accountStatus(CustomerAccountStatusEnum.ACTIVE)
-        .customer(CustomerModel.builder().id(1L).build())
+        .customer(CustomerModel.builder()
+            .id(1L)
+            .name("John Doe")
+            .email("john.doe@example.com")
+            .build())
         .build();
 
     CustomerAccountModel creditAccount = CustomerAccountModel.builder()
         .id(creditAccountId)
         .balance(BigDecimal.valueOf(0))
         .accountStatus(CustomerAccountStatusEnum.ACTIVE)
-        .customer(CustomerModel.builder().id(1L).build())
+        .customer(CustomerModel.builder()
+            .id(1L)
+            .name("John Doe")
+            .email("john.doe@example.com")
+            .build())
+        .build();
+
+    TransferModel transferCreated = TransferModel.builder()
+        .id(1L)
+        .creditAccount(creditAccount)
+        .debitAccount(debitAccount)
+        .amount(BigDecimal.TEN)
+        .transferStatus(TransferStatusEnum.COMPLETED)
         .build();
 
     when(customerAccountService.findById(debitAccountId)).thenReturn(debitAccount);
     when(customerAccountService.findById(creditAccountId)).thenReturn(creditAccount);
-    when(transferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(transferRepository.save(any())).thenReturn(transferCreated);
 
     TransferModel result = transferService.performTransfer(debitAccountId, creditAccountId, amount);
 
@@ -77,6 +98,7 @@ class TransferServiceImplTest {
     verify(customerAccountService, times(2)).updateBalance(any(), any(), any());
     verify(transactionService, times(2)).add(any());
     verify(transferRepository, times(1)).save(any());
+    verify(notificationService, times(2)).sendNotification(any(String.class), any(BigDecimal.class), any(Long.class), any(TransactionReasonEnum.class));
   }
 
   @Test
@@ -179,14 +201,22 @@ class TransferServiceImplTest {
         .id(1L)
         .balance(BigDecimal.valueOf(0))
         .accountStatus(CustomerAccountStatusEnum.ACTIVE)
-        .customer(CustomerModel.builder().id(1L).build())
+        .customer(CustomerModel.builder()
+            .id(1L)
+            .name("John Doe")
+            .email("john.doe@example.com")
+            .build())
         .build();
 
     CustomerAccountModel creditAccount = CustomerAccountModel.builder()
         .id(2L)
         .balance(BigDecimal.valueOf(100))
         .accountStatus(CustomerAccountStatusEnum.ACTIVE)
-        .customer(CustomerModel.builder().id(1L).build())
+        .customer(CustomerModel.builder()
+            .id(1L)
+            .name("John Doe")
+            .email("john.doe@example.com")
+            .build())
         .build();
 
     TransferModel completedTransfer = TransferModel.builder()
@@ -210,6 +240,7 @@ class TransferServiceImplTest {
     verify(customerAccountService, times(2)).updateBalance(any(), any(), any());
     verify(transactionService, times(2)).add(any());
     verify(transferRepository, times(1)).save(any());
+    verify(notificationService, times(2)).sendNotification(any(String.class), any(BigDecimal.class), any(Long.class), any(TransactionReasonEnum.class));
   }
 
   @Test

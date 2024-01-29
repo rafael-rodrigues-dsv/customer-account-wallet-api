@@ -1,6 +1,7 @@
 package dev.challenge.api.domain.impl;
 
 import dev.challenge.api.adapter.database.repository.TransferRepository;
+import dev.challenge.api.adapter.notification.NotificationService;
 import dev.challenge.api.domain.CustomerAccountService;
 import dev.challenge.api.domain.TransactionService;
 import dev.challenge.api.domain.TransferService;
@@ -28,6 +29,7 @@ public class TransferServiceImpl implements TransferService {
   private final TransferRepository transferRepository;
   private final CustomerAccountService customerAccountService;
   private final TransactionService transactionService;
+  private final NotificationService notificationService;
 
   @Override
   public TransferModel performTransfer(Long debitAccountId, Long creditAccountId, BigDecimal amount) {
@@ -35,6 +37,8 @@ public class TransferServiceImpl implements TransferService {
     CustomerAccountModel creditAccount = customerAccountService.findById(creditAccountId);
 
     checkTransferEligibility(debitAccount, creditAccount, amount);
+
+    TransactionReasonEnum transactionReason = TransactionReasonEnum.TRANSFER;
 
     customerAccountService.updateBalance(debitAccount.getId(),
         debitAccount.getCustomer().getId(),
@@ -56,7 +60,7 @@ public class TransferServiceImpl implements TransferService {
         .account(debitAccount)
         .amount(amount.negate())
         .transactionType(TransactionTypeEnum.DEBIT)
-        .transactionReason(TransactionReasonEnum.TRANSFER)
+        .transactionReason(transactionReason)
         .transfer(createdTransfer)
         .build());
 
@@ -64,13 +68,16 @@ public class TransferServiceImpl implements TransferService {
         .account(creditAccount)
         .amount(amount)
         .transactionType(TransactionTypeEnum.CREDIT)
-        .transactionReason(TransactionReasonEnum.TRANSFER)
+        .transactionReason(transactionReason)
         .transfer(createdTransfer)
         .build());
 
     createdTransfer.setTransactions(transactionService.findAllByTransferId(createdTransfer.getId())
         .stream()
         .collect(Collectors.toSet()));
+
+    notificationService.sendNotification(debitAccount.getCustomer().getEmail(), amount, createdTransfer.getId(), transactionReason);
+    notificationService.sendNotification(creditAccount.getCustomer().getEmail(), amount, createdTransfer.getId(), transactionReason);
 
     return createdTransfer;
   }
@@ -86,6 +93,7 @@ public class TransferServiceImpl implements TransferService {
     CustomerAccountModel debitAccount = customerAccountService.findById(transferToCancel.getDebitAccount().getId());
     CustomerAccountModel creditAccount = customerAccountService.findById(transferToCancel.getCreditAccount().getId());
     BigDecimal amount = transferToCancel.getAmount();
+    TransactionReasonEnum transactionReason = TransactionReasonEnum.REFUND;
 
     checkTransferEligibility(creditAccount, debitAccount, amount);
 
@@ -105,7 +113,7 @@ public class TransferServiceImpl implements TransferService {
         .account(creditAccount)
         .amount(amount.negate())
         .transactionType(TransactionTypeEnum.DEBIT)
-        .transactionReason(TransactionReasonEnum.REFUND)
+        .transactionReason(transactionReason)
         .transfer(transferToCancel)
         .build());
 
@@ -113,13 +121,16 @@ public class TransferServiceImpl implements TransferService {
         .account(debitAccount)
         .amount(amount)
         .transactionType(TransactionTypeEnum.CREDIT)
-        .transactionReason(TransactionReasonEnum.REFUND)
+        .transactionReason(transactionReason)
         .transfer(transferToCancel)
         .build());
 
     canceledTransfer.setTransactions(transactionService.findAllByTransferId(canceledTransfer.getId())
         .stream()
         .collect(Collectors.toSet()));
+
+    notificationService.sendNotification(debitAccount.getCustomer().getEmail(), amount, canceledTransfer.getId(), transactionReason);
+    notificationService.sendNotification(creditAccount.getCustomer().getEmail(), amount, canceledTransfer.getId(), transactionReason);
 
     return canceledTransfer;
   }
