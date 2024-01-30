@@ -1,6 +1,5 @@
 package dev.challenge.api.adapter.notification.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.challenge.api.adapter.notification.dto.notification.SendNotificationDto;
 import dev.challenge.api.configuration.NotificationConfig;
 import dev.challenge.api.domain.enumeration.TransactionReasonEnum;
@@ -23,96 +22,122 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class CamelNotificationServiceImplTest extends CamelTestSupport {
 
-  @Mock
-  private CamelContext camelContext;
+    @Mock
+    private CamelContext camelContext;
 
-  @Mock
-  private ProducerTemplate producerTemplate;
+    @Mock
+    private ProducerTemplate producerTemplate;
 
-  @Mock
-  private NotificationConfig notificationConfig;
+    @Mock
+    private NotificationConfig notificationConfig;
 
-  @Mock
-  private ObjectMapper objectMapper;
+    @InjectMocks
+    private CamelNotificationServiceImpl notificationService;
 
-  @InjectMocks
-  private CamelNotificationServiceImpl notificationService;
+    @Captor
+    private ArgumentCaptor<Map<String, Object>> headersCaptor;
 
-  @Captor
-  private ArgumentCaptor<Map<String, Object>> headersCaptor;
+    @Test
+    void testSendNotification_Success() throws IOException {
+        // Arrange
+        String email = "test@example.com";
+        BigDecimal amount = BigDecimal.TEN;
+        Long transferId = 123L;
+        TransactionReasonEnum transactionReason = TransactionReasonEnum.REFUND;
 
-  @Test
-  void testSendNotification_Success() throws IOException {
-    // Arrange
-    String email = "test@example.com";
-    BigDecimal amount = BigDecimal.TEN;
-    Long transferId = 123L;
-    TransactionReasonEnum transactionReason = TransactionReasonEnum.REFUND;
+        ReflectionTestUtils.setField(notificationConfig, "notificationServiceUrl", "http://example.com");
 
-    ReflectionTestUtils.setField(notificationConfig, "notificationServiceUrl", "http://example.com");
+        // Act
+        notificationService.sendNotification(email, amount, transferId, transactionReason);
 
-    // Act
-    notificationService.sendNotification(email, amount, transferId, transactionReason);
+        // Assert
+        verify(producerTemplate).sendBodyAndHeaders(eq("direct:sendNotification"), Mockito.isNull(), headersCaptor.capture());
 
-    // Assert
-    verify(producerTemplate).sendBodyAndHeaders(Mockito.eq("direct:sendNotification"), Mockito.isNull(), headersCaptor.capture());
+        Map<String, Object> headers = headersCaptor.getValue();
+        assertEquals(email, headers.get("email"), "Email should match");
+        assertEquals(amount, headers.get("amount"), "Amount should match");
+        assertEquals(transferId, headers.get("transferId"), "TransferId should match");
+        assertEquals(transactionReason.name(), headers.get("transactionReason"), "TransactionReason should match");
+    }
 
-    Map<String, Object> headers = headersCaptor.getValue();
-    assertEquals(email, headers.get("email"));
-    assertEquals(amount, headers.get("amount"));
-    assertEquals(transferId, headers.get("transferId"));
-    assertEquals(transactionReason.name(), headers.get("transactionReason"));
-  }
+    @Test
+    void testSendNotification_ErrorLogging() throws IOException {
+        // Arrange
+        String email = "test@example.com";
+        BigDecimal amount = BigDecimal.TEN;
+        Long transferId = 123L;
+        TransactionReasonEnum transactionReason = TransactionReasonEnum.REFUND;
 
-  @Test
-  void testCreateRouteIfNotCreated_RouteNotCreated() throws Exception {
-    // Act
-    notificationService.sendNotification("test@example.com", BigDecimal.TEN, 123L, TransactionReasonEnum.REFUND);
+        ReflectionTestUtils.setField(notificationConfig, "notificationServiceUrl", "http://example.com");
 
-    // Assert
-    verify(camelContext).addRoutes(Mockito.any(RouteBuilder.class));
-  }
+        doThrow(new RuntimeException("Simulated error sending notification")).when(producerTemplate)
+                .sendBodyAndHeaders(any(String.class), any(), any(Map.class));
 
-  @Test
-  void testCreateRouteIfNotCreated_RouteAlreadyCreated() throws Exception {
-    // Arrange
-    notificationService.sendNotification("test@example.com", BigDecimal.TEN, 123L, TransactionReasonEnum.REFUND);
+        // Act
+        notificationService.sendNotification(email, amount, transferId, transactionReason);
 
-    // Act
-    notificationService.sendNotification("test@example.com", BigDecimal.TEN, 123L, TransactionReasonEnum.REFUND);
+        // Assert
+        verify(producerTemplate).sendBodyAndHeaders(any(String.class), any(), any(Map.class));
+    }
 
-    // Assert
-    verify(camelContext, Mockito.times(1)).addRoutes(Mockito.any(RouteBuilder.class));
-  }
+    @Test
+    void testSendNotification_ExceptionInServiceExecution() throws Exception {
+        // Arrange
+        ReflectionTestUtils.setField(notificationConfig, "notificationServiceUrl", "http://example.com");
 
-  @Test
-  void testCreateNotificationRequestDto() {
-    // Arrange
-    String email = "test@example.com";
-    BigDecimal amount = BigDecimal.TEN;
-    Long transferId = 123L;
-    TransactionReasonEnum transactionReason = TransactionReasonEnum.REFUND;
+        doThrow(new RuntimeException("Simulated error executing notification service")).when(camelContext).addRoutes(any(RouteBuilder.class));
 
-    String requestBody = "Conteúdo da mensagem, se necessário";
-    org.apache.camel.Exchange exchange = createExchangeWithBody(requestBody);
+        // Act
+        notificationService.sendNotification("test@example.com", BigDecimal.TEN, 123L, TransactionReasonEnum.REFUND);
 
-    // Adicione headers ao exchange
-    exchange.getIn().setHeader("email", email);
-    exchange.getIn().setHeader("amount", amount);
-    exchange.getIn().setHeader("transferId", transferId);
-    exchange.getIn().setHeader("transactionReason", transactionReason.name());
+        // Assert
+        verify(producerTemplate).sendBodyAndHeaders(any(String.class), any(), any(Map.class));
+    }
 
-    // Act
-    SendNotificationDto sendNotificationDto = notificationService.createNotificationRequestDto(exchange);
+    @Test
+    void testCreateRouteIfNotCreated_RouteAlreadyCreated() throws Exception {
+        // Arrange
+        notificationService.sendNotification("test@example.com", BigDecimal.TEN, 123L, TransactionReasonEnum.REFUND);
 
-    // Assert
-    assertEquals(email, sendNotificationDto.getEmail());
-    assertEquals("Cancelamento: Transferência cancelada.", sendNotificationDto.getMessage());
-    assertEquals("ID da transferência: 123, Valor: 10", sendNotificationDto.getDetails());
-  }
+        // Act
+        notificationService.sendNotification("test@example.com", BigDecimal.TEN, 123L, TransactionReasonEnum.REFUND);
+
+        // Assert
+        verify(camelContext, times(1)).addRoutes(any(RouteBuilder.class));
+    }
+
+    @Test
+    void testCreateNotificationRequestDto() {
+        // Arrange
+        String email = "test@example.com";
+        BigDecimal amount = BigDecimal.TEN;
+        Long transferId = 123L;
+        TransactionReasonEnum transactionReason = TransactionReasonEnum.REFUND;
+
+        String requestBody = "Conteúdo da mensagem, se necessário";
+        org.apache.camel.Exchange exchange = createExchangeWithBody(requestBody);
+
+        // Adicione headers ao exchange
+        exchange.getIn().setHeader("email", email);
+        exchange.getIn().setHeader("amount", amount);
+        exchange.getIn().setHeader("transferId", transferId);
+        exchange.getIn().setHeader("transactionReason", transactionReason.name());
+
+        // Act
+        SendNotificationDto sendNotificationDto = notificationService.createNotificationRequestDto(exchange);
+
+        // Assert
+        assertEquals(email, sendNotificationDto.getEmail(), "Email should match");
+        assertEquals("Cancelamento: Transferência cancelada.", sendNotificationDto.getMessage(), "Message should match");
+        assertEquals("ID da transferência: 123, Valor: 10", sendNotificationDto.getDetails(), "Details should match");
+    }
 }

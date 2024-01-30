@@ -56,6 +56,7 @@ Bem-vindo à **Customer API**, uma aplicação desenvolvida com Spring Boot que 
 - **JUnit Jupiter 5.10.1**
 - **Mockito JUnit Jupiter 3.6.0**
 - **Jacoco Maven Plugin 0.8.7**
+- **Apache Camel 3.15.0**
 
 ## 🏗️ Arquitetura
 
@@ -64,6 +65,7 @@ Bem-vindo à **Customer API**, uma aplicação desenvolvida com Spring Boot que 
 - **SOLID**
 - **Clean Code**
 - **Repository**
+- **Design Patterns**
 
 ## 📚 Documentação da API
 
