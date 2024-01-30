@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>dev.challenge</groupId>
-    <artifactId>customer-api</artifactId>
+    <artifactId>customer-account-wallet-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>customer-api</name>
     <description>Demo project for using Swagger 3 in Spring Boot 3</description>

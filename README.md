@@ -1,8 +1,8 @@
-# 🌐 Customer API
+# 🌐 Customer Account Wallet API
 
 ## Tópicos
 
-1. [🌐 Customer API](#-customer-api)
+1. [🌐 Customer Walltet API](#-customer-account-walltet-api)
 1. [📖 Descrição](#-descrição)
 2. [🚀 Funcionalidades](#-funcionalidades)
    - [🧑‍💼 Customers (Clientes)](#-customers-clientes)
@@ -15,7 +15,7 @@
 
 ## 📖 Descrição
 
-Bem-vindo à **Customer API**, uma aplicação desenvolvida com Spring Boot que oferece funcionalidades relacionadas a transferências, clientes, endereços de clientes e contas de clientes. Abaixo, você encontrará um resumo das principais funcionalidades, tecnologias utilizadas e a arquitetura da aplicação.
+Bem-vindo à **Customer Account Wallet API**, uma aplicação desenvolvida com Spring Boot que oferece funcionalidades relacionadas a transferências, clientes, endereços de clientes e contas de clientes. Abaixo, você encontrará um resumo das principais funcionalidades, tecnologias utilizadas e a arquitetura da aplicação.
 
 ## 🚀 Funcionalidades
 
